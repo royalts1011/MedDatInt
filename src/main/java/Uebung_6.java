@@ -14,8 +14,8 @@ public class Uebung_6 {
 
 
     public static void main(String[] args) {
-        //createNewPatient();
-        //getAllNames();
+        createNewPatient();
+        getAllNames();
         makeWholeHospital();
 
 
@@ -110,10 +110,10 @@ public class Uebung_6 {
 
         for(Bundle.BundleEntryComponent tmp:results.getEntry()) {
             Patient currentPatient = (Patient) tmp.getResource();
-            allPatientNames.add(currentPatient.getName().get(0).getGivenAsSingleString());
+            allPatientNames.add(currentPatient.getName().get(0).getGiven().get(0) + " " + currentPatient.getName().get(0).getFamily());
         }
 
-        //System.out.println(ctx.newXmlParser().encodeResourceToString(results));
+        System.out.println(ctx.newXmlParser().encodeResourceToString(results));
 
         //Write Names to JSON file
         try (FileWriter fileTXT = new FileWriter("allPatientNamesJSON.txt")) {
@@ -135,6 +135,7 @@ public class Uebung_6 {
         // Set up station and reference
         Organization station = new Organization();
         station.setName("Geburtsstation");
+
         station.addIdentifier().setValue(String.valueOf(new Random().nextInt(10000)));
         Reference refToStat = new Reference();
         refToStat.setId(station.getId());
@@ -146,11 +147,13 @@ public class Uebung_6 {
         adressOfHospital.setCity("Lübeck");
         hospital.setName("MIO");
         hospital.addAddress(adressOfHospital);
+
         hospital.addIdentifier().setValue(String.valueOf(new Random().nextInt(10000)));
         Reference refToHosp = new Reference();
         refToHosp.setId(hospital.getId());
+        station.setPartOf(refToHosp); //Station is Part of hospital.
 
-        station.setPartOfTarget(hospital); //Station is Part of hospital.
+        //station.setPartOfTarget(hospital);
 
         //create Doctor
         Practitioner doc = new Practitioner();
@@ -163,7 +166,8 @@ public class Uebung_6 {
         CodeableConcept conceptDoc = new CodeableConcept();
         conceptDoc.addCoding().setCode("doctor").setSystem("http://terminology.hl7.org/CodeSystem/practitioner-role").setDisplay("Doctor");
         roleOfDoc.addCode(conceptDoc);
-        roleOfDoc.setOrganization(refToStat);
+
+
         roleOfDoc.setPractitionerTarget(doc);
         roleOfDoc.setOrganization(refToStat); //RoleofDoc(Doc) is Part of station.
 
@@ -178,7 +182,7 @@ public class Uebung_6 {
         CodeableConcept conceptSis = new CodeableConcept();
         conceptSis.addCoding().setCode("nurse").setSystem("http://terminology.hl7.org/CodeSystem/practitioner-role").setDisplay("Nurse");
         roleOfSis.addCode(conceptSis);
-        roleOfSis.setOrganization(refToStat);
+
         roleOfSis.setPractitionerTarget(sis);
         roleOfSis.setOrganization(refToStat); //RoleofSis(Sis) is Part of station.
 
@@ -187,7 +191,7 @@ public class Uebung_6 {
 
 
         //Write all to JSON file.
-        String outputJSON = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(roleOfSis);
+        String outputJSON = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(hospital);
         try (FileWriter fileJSON = new FileWriter("ALL.json")) {
 
             fileJSON.write(outputJSON);

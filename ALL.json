@@ -1,0 +1,10 @@
+{
+  "resourceType": "Organization",
+  "identifier": [ {
+    "value": "3377"
+  } ],
+  "name": "MIO",
+  "address": [ {
+    "city": "Lübeck"
+  } ]
+}
