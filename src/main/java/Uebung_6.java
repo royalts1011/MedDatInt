@@ -1,5 +1,8 @@
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.context.PerformanceOptionsEnum;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
+import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.r4.model.*;
 
 import javax.management.relation.Role;
@@ -7,25 +10,53 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.*;
 
 public class Uebung_6 {
 
 
     public static void main(String[] args) {
-        createNewPatient();
-        getAllNames();
-        makeWholeHospital();
+        // Create context
+        FhirContext ctxR4 = FhirContext.forR4();
+
+        /**
+         * Theoretisch für weniger Server Checks bei vertrauten ServerBases. Funktioniert aber leider noch nicht.
+         *
+         *         // Disable server validation (don't pull the server's metadata first)
+         *         ctxR4.getRestfulClientFactory().setServerValidationMode(ServerValidationModeEnum.NEVER);
+         *         // configure it for deferred child scanning
+         *         ctxR4.setPerformanceOptions(PerformanceOptionsEnum.DEFERRED_MODEL_SCANNING);
+         */
 
 
+//        createAntonie(ctxR4);
+//        getAllNames(ctxR4);
+        makeWholeHospital(ctxR4);
 
     }
-    /*
-    method which creates new patient
+
+    /**
+     * This method creates files with custom endings.
+     *
+     * @param fileName      String: The name of the file inlcuding the file ending (e.g. .json)
+     * @param fileContent   String: The content of the file
      */
-    public static void createNewPatient(){
-        FhirContext ctx = FhirContext.forR4();
+    private static void writeToFile(String fileName, String fileContent){
+        // write json file to disk
+        try (FileWriter file = new FileWriter(fileName)) {
+
+            file.write(fileContent);
+            file.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+     * method which creates Antonie Gruenlich
+     */
+    public static void createAntonie(FhirContext ctx){
         Patient newPatient = new Patient();
 
         Identifier patID = newPatient.addIdentifier();
@@ -36,12 +67,11 @@ public class Uebung_6 {
         //Name
         HumanName name = newPatient.addName();
         name.setUse(HumanName.NameUse.OFFICIAL);
-        name.setFamily("Gruenlich");
-        name.addGiven("Antonie");
+        name.setFamily("Gruenlich").addGiven("Antonie");
 
         HumanName maidenName = newPatient.addName();
         maidenName.setUse(HumanName.NameUse.MAIDEN);
-        maidenName.setFamily("Bruddenbrooks");
+        maidenName.setFamily("Buddenbrooks");
 
         //Birthday
         newPatient.setBirthDateElement(new DateType("1827-08-06"));
@@ -68,31 +98,15 @@ public class Uebung_6 {
 
         //Write XML and JASON Files
         String outputJSON = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(newPatient);
+        writeToFile("newPatientJSON.json", outputJSON);
         String outputXML = ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(newPatient);
-        //Write JSON file
-        try (FileWriter fileJSON = new FileWriter("newPatientJSON.json")) {
+        writeToFile("newPatientXML.xml", outputXML);
 
-            fileJSON.write(outputJSON);
-            fileJSON.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //Write XML file
-        try (FileWriter fileXML = new FileWriter("newPatientXML.xml")) {
-
-            fileXML.write(outputXML);
-            fileXML.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     /*
     Method which returns all Patient Names
      */
-    public static void getAllNames(){
-        FhirContext ctx = FhirContext.forR4();
+    public static void getAllNames(FhirContext ctx){
         IGenericClient client = ctx.newRestfulGenericClient("https://funke.imi.uni-luebeck.de/public/fhir");
 
         //create Bundle by searching for Patients
@@ -102,36 +116,20 @@ public class Uebung_6 {
                 .returnBundle(Bundle.class)
                 .execute();
 
-
-
+        List<Patient> patients = BundleUtil.toListOfResourcesOfType(ctx, results, Patient.class);
 
         //Go through bundle and write name for each patient to list
-        ArrayList <String> allPatientNames = new ArrayList<>();
-
-        for(Bundle.BundleEntryComponent tmp:results.getEntry()) {
-            Patient currentPatient = (Patient) tmp.getResource();
-            allPatientNames.add(currentPatient.getName().get(0).getGiven().get(0) + " " + currentPatient.getName().get(0).getFamily());
+        String allPatientNames = "";
+        for(Patient pat : patients) {
+            allPatientNames += (pat.getName().get(0).getNameAsSingleString() + '\n');
         }
 
-        System.out.println(ctx.newXmlParser().encodeResourceToString(results));
-
-        //Write Names to JSON file
-        try (FileWriter fileTXT = new FileWriter("allPatientNamesJSON.txt")) {
-
-            for (String s : allPatientNames) {
-                fileTXT.write(s + "\n");
-            }
-            fileTXT.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        //Write Names to file
+        writeToFile("allPatientNames.txt", allPatientNames);
 
     }
 
-    public static void makeWholeHospital(){
-        FhirContext ctx = FhirContext.forR4();
+    public static void makeWholeHospital(FhirContext ctx){
         // Set up station and reference
         Organization station = new Organization();
         station.setName("Geburtsstation");
@@ -147,6 +145,7 @@ public class Uebung_6 {
         adressOfHospital.setCity("Lübeck");
         hospital.setName("MIO");
         hospital.addAddress(adressOfHospital);
+        hospital.addContained(station);
 
         hospital.addIdentifier().setValue(String.valueOf(new Random().nextInt(10000)));
         Reference refToHosp = new Reference();
@@ -186,20 +185,17 @@ public class Uebung_6 {
         roleOfSis.setPractitionerTarget(sis);
         roleOfSis.setOrganization(refToStat); //RoleofSis(Sis) is Part of station.
 
+//        Set<String> el = new HashSet<String>();
+//        el.add("HumanName");
+//        el.add("Practitioner");
+//        .setEncodeElements(el)
 
-
-
+        List<Resource> all_contained = hospital.getContained();
+        Bundle b = new Bundle();
 
         //Write all to JSON file.
         String outputJSON = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(hospital);
-        try (FileWriter fileJSON = new FileWriter("ALL.json")) {
-
-            fileJSON.write(outputJSON);
-            fileJSON.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writeToFile("ALL.json", outputJSON);
 
 
     }

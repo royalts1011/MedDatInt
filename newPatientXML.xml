@@ -1,7 +1,7 @@
 <Patient xmlns="http://hl7.org/fhir">
    <identifier>
       <system value="http://www.kh-uzl.de/fhir/patients"></system>
-      <value value="2465"></value>
+      <value value="3309"></value>
    </identifier>
    <name>
       <use value="official"></use>
@@ -10,7 +10,7 @@
    </name>
    <name>
       <use value="maiden"></use>
-      <family value="Bruddenbrooks"></family>
+      <family value="Buddenbrooks"></family>
    </name>
    <birthDate value="1827-08-06"></birthDate>
    <maritalStatus>

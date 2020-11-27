@@ -2,7 +2,7 @@
   "resourceType": "Patient",
   "identifier": [ {
     "system": "http://www.kh-uzl.de/fhir/patients",
-    "value": "2465"
+    "value": "3309"
   } ],
   "name": [ {
     "use": "official",
@@ -10,7 +10,7 @@
     "given": [ "Antonie" ]
   }, {
     "use": "maiden",
-    "family": "Bruddenbrooks"
+    "family": "Buddenbrooks"
   } ],
   "birthDate": "1827-08-06",
   "maritalStatus": {
