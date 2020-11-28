@@ -89,7 +89,7 @@ public class utils {
         station.setName("Geburtsstation");
         station.addIdentifier().setValue(String.valueOf(new Random().nextInt(10000)));
         Reference refToStat = new Reference();
-        refToStat.setId(station.getId());
+        //refToStat.setId(station.getId());
         refToStat.setResource(station);
 
 
@@ -101,11 +101,12 @@ public class utils {
         hospital.addAddress(adressOfHospital);
         hospital.addIdentifier().setValue(String.valueOf(new Random().nextInt(10000)));
         Reference refToHosp = new Reference();
-        refToHosp.setId(hospital.getId());
+        refToHosp.setResource(hospital);
+
 
         // link staton and hospital
         hospital.getEndpoint().add(refToStat); //Station is Part of hospital.
-        //station.getPartOf().setResource(hospital);
+        station.setPartOfTarget(hospital);
 
         //create Doctor
         Practitioner doc = new Practitioner();
@@ -147,28 +148,28 @@ public class utils {
         // link sis to station
         station.getEndpoint().add(refSisStat);
 
-        IParser parser =  ctx.newJsonParser();
-        parser.setPrettyPrint(true);
-
-        String encode = parser.encodeResourceToString(hospital);
-        System.out.println(encode);
 
         //Write all to JSON file.
-        //List<IBaseResource> retVal = new ArrayList<IBaseResource>();
-        // retVal.add(hospital);
-
-//        List<IBaseResource> retVal = new ArrayList<IBaseResource>();
-//        retVal.add(hospital);
-//
-//        for(Resource r :retVal) {
-//            System.out.println();
-//        }
-
         String outputJSON = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(hospital);
-        try (FileWriter fileJSON = new FileWriter(outputPath + "ALL.json")) {
+        String outputXML = ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(hospital);
+
+        System.out.println(outputJSON);
+
+        try
+            (FileWriter fileJSON = new FileWriter(outputPath + "hospital.json")) {
 
             fileJSON.write(outputJSON);
             fileJSON.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try
+                (FileWriter fileXML = new FileWriter(outputPath + "hospital.xml")) {
+
+            fileXML.write(outputXML);
+            fileXML.flush();
 
         } catch (IOException e) {
             e.printStackTrace();
