@@ -24,9 +24,9 @@ public class Uebung_6 {
 
         String outputPath = "output/";
 
-        patBuilder patBuild = new patBuilder(ctx);
-        patBuild.buildPatient();
-        utils.getAllNames(ctx, outputPath);
+//        patBuilder patBuild = new patBuilder(ctx);
+//        patBuild.buildPatient();
+//        utils.getAllNames(ctx, outputPath);
         utils.makeWholeHospital(ctx, outputPath);
         // utils.anotherTryForHospital(ctx, outputPath);
 

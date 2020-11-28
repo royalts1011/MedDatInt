@@ -14,7 +14,7 @@ public class patBuilder {
         this.ctx = ctx;
     }
 
-    public void buildPatient()    {
+    public Patient buildPatient()    {
 
         Patient pat = new Patient();
 
@@ -67,6 +67,8 @@ public class patBuilder {
 
         encoded = this.ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(pat);
         storeMsg(encoded, "Patient.json");
+
+        return pat;
     }
 
     public static void storeMsg(String msg, String name) {

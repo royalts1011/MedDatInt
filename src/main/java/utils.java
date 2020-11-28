@@ -6,9 +6,7 @@ import org.hl7.fhir.r4.model.*;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class utils {
 
@@ -143,6 +141,35 @@ public class utils {
 
         // link sis to station
         station.getEndpoint().add(refSisStat);
+
+
+        // get the patient for the planned visit
+        patBuilder patBuild = new patBuilder(ctx);
+        Patient mother = patBuild.buildPatient();
+
+        // Make Appointment Date
+        Appointment appoint = new Appointment();
+        Calendar cal = Calendar.getInstance();
+        cal.set(1846, 10,1);
+        appoint.setStart(cal.getTime());
+        Reference refToAppoint = new Reference(appoint);
+
+        // from ValueSet https://fhir-ru.github.io/v3/ActEncounterCode/vs.html
+        Coding typeOfEncounter = new Coding("http://terminology.hl7.org/CodeSystem/v3-ActCode", "IMP", "inpatient encounter");
+//        Coding typeOfEncounter = new Coding("http://terminology.hl7.org/CodeSystem/v3-ActCode", "PRENC", "pre-admission");
+        Encounter doomsday = new Encounter();
+        doomsday.setStatus(Encounter.EncounterStatus.PLANNED);
+        doomsday.setClass_(typeOfEncounter);
+
+        Encounter.EncounterParticipantComponent motherComponent = new Encounter.EncounterParticipantComponent();
+        motherComponent.setIndividualTarget(mother);
+        Encounter.EncounterParticipantComponent stationComponent = new Encounter.EncounterParticipantComponent();
+        stationComponent.setIndividualTarget(station);
+
+        // Connect substancial Encounter parts
+        doomsday.addAppointment(refToAppoint);
+        doomsday.addParticipant(motherComponent).addParticipant(stationComponent);
+
 
 
         //Write all to JSON file.
