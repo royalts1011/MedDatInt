@@ -169,6 +169,10 @@ public class utils {
         // Connect substancial Encounter parts
         doomsday.addAppointment(refToAppoint);
         doomsday.addParticipant(motherComponent).addParticipant(stationComponent);
+        Reference refToEncounter = new Reference(doomsday);
+
+        station.getEndpoint().add(refToEncounter);
+
 
 
 
