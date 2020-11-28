@@ -89,7 +89,6 @@ public class utils {
         station.setName("Geburtsstation");
         station.addIdentifier().setValue(String.valueOf(new Random().nextInt(10000)));
         Reference refToStat = new Reference();
-        //refToStat.setId(station.getId());
         refToStat.setResource(station);
 
 
@@ -102,7 +101,6 @@ public class utils {
         hospital.addIdentifier().setValue(String.valueOf(new Random().nextInt(10000)));
         Reference refToHosp = new Reference();
         refToHosp.setResource(hospital);
-
 
         // link staton and hospital
         hospital.getEndpoint().add(refToStat); //Station is Part of hospital.
@@ -119,7 +117,6 @@ public class utils {
         CodeableConcept conceptDoc = new CodeableConcept();
         conceptDoc.addCoding().setCode("doctor").setSystem("http://terminology.hl7.org/CodeSystem/practitioner-role").setDisplay("Doctor");
         roleOfDoc.addCode(conceptDoc);
-        roleOfDoc.setOrganization(refToStat);
         roleOfDoc.setPractitionerTarget(doc);
         roleOfDoc.setOrganization(refToStat); //RoleofDoc(Doc) is Part of station.
         Reference refDocStat = new Reference();
@@ -139,7 +136,6 @@ public class utils {
         CodeableConcept conceptSis = new CodeableConcept();
         conceptSis.addCoding().setCode("nurse").setSystem("http://terminology.hl7.org/CodeSystem/practitioner-role").setDisplay("Nurse");
         roleOfSis.addCode(conceptSis);
-        roleOfSis.setOrganization(refToStat);
         roleOfSis.setPractitionerTarget(sis);
         roleOfSis.setOrganization(refToStat); //RoleofSis(Sis) is Part of station.
         Reference refSisStat = new Reference();
