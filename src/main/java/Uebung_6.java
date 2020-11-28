@@ -110,13 +110,13 @@ public class Uebung_6 {
 
         for(Bundle.BundleEntryComponent tmp:results.getEntry()) {
             Patient currentPatient = (Patient) tmp.getResource();
-            allPatientNames.add(currentPatient.getName().get(0).getGiven().get(0) + " " + currentPatient.getName().get(0).getFamily());
+            allPatientNames.add(currentPatient.getName().get(0).getNameAsSingleString());
         }
 
         System.out.println(ctx.newXmlParser().encodeResourceToString(results));
 
         //Write Names to JSON file
-        try (FileWriter fileTXT = new FileWriter("allPatientNamesJSON.txt")) {
+        try (FileWriter fileTXT = new FileWriter("allPatientNames.txt")) {
 
             for (String s : allPatientNames) {
                 fileTXT.write(s + "\n");
