@@ -1,16 +1,4 @@
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.context.PerformanceOptionsEnum;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.client.api.ServerValidationModeEnum;
-import ca.uhn.fhir.util.BundleUtil;
-import org.hl7.fhir.r4.model.*;
-
-import javax.management.relation.Role;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
 
 public class Uebung_6 {
 
