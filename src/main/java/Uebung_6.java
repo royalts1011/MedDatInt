@@ -26,8 +26,8 @@ public class Uebung_6 {
          *         // configure it for deferred child scanning
          *         ctxR4.setPerformanceOptions(PerformanceOptionsEnum.DEFERRED_MODEL_SCANNING);
          */
-        String outputPath = "output/";
-        Utils ut = new Utils(ctxR4, outputPath);
+        String outputFolder = "output";
+        Utils ut = new Utils(ctxR4, outputFolder);
 
         ut.createAntonie();
         ut.getAllNames();

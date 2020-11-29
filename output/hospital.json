@@ -1,0 +1,60 @@
+{
+  "resourceType": "Organization",
+  "contained": [ {
+    "resourceType": "Organization",
+    "id": "1",
+    "identifier": [ {
+      "value": "9528"
+    } ],
+    "name": "Geburtsstation",
+    "endpoint": [ {
+      "reference": "#2"
+    }, {
+      "reference": "#3"
+    }, {
+      "reference": "#4"
+    } ]
+  }, {
+    "resourceType": "Practitioner",
+    "id": "2",
+    "name": [ {
+      "use": "official",
+      "family": "Wackel",
+      "given": [ "Peter" ]
+    } ]
+  }, {
+    "resourceType": "Practitioner",
+    "id": "3",
+    "name": [ {
+      "use": "official",
+      "family": "Wackelina",
+      "given": [ "Petra" ]
+    } ]
+  }, {
+    "resourceType": "Encounter",
+    "id": "4",
+    "status": "planned",
+    "class": {
+      "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+      "code": "IMP",
+      "display": "inpatient encounter"
+    },
+    "appointment": [ {
+      "reference": "#5"
+    } ]
+  }, {
+    "resourceType": "Appointment",
+    "id": "5",
+    "start": "1846-11-01T14:33:27.862+01:00"
+  } ],
+  "identifier": [ {
+    "value": "1958"
+  } ],
+  "name": "MIO",
+  "address": [ {
+    "city": "Lübeck"
+  } ],
+  "endpoint": [ {
+    "reference": "#1"
+  } ]
+}

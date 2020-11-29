@@ -13,12 +13,12 @@ import java.util.Random;
 
 public class Utils {
     private FhirContext ctx;
-    private String outPath;
+    private String outputFolder;
     private Patient pat;
 
-    public Utils(FhirContext ctx, String outputPath){
+    public Utils(FhirContext ctx, String outputFolder){
         this.ctx = ctx;
-        this.outPath = outputPath;
+        this.outputFolder = outputFolder;
     }
 
     /**
@@ -28,12 +28,17 @@ public class Utils {
      * @param fileContent String: The content of the file
      */
     private void writeToFile(String fileName, String fileContent) {
-        // write json file to disk
-        try (FileWriter file = new FileWriter(this.outPath + fileName)) {
+        File dir = new File(this.outputFolder);
+        if(!dir.exists())   {
+            dir.mkdir();
+        }
+        File file = new File(outputFolder + "/" + fileName);
 
-            file.write(fileContent);
-            file.flush();
-
+        try {
+            FileWriter writer = new FileWriter(file ,false);
+            writer.write(fileContent);
+            writer.flush();
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,0 +1,70 @@
+<Organization xmlns="http://hl7.org/fhir">
+   <contained>
+      <Organization xmlns="http://hl7.org/fhir">
+         <id value="1"></id>
+         <identifier>
+            <value value="9528"></value>
+         </identifier>
+         <name value="Geburtsstation"></name>
+         <endpoint>
+            <reference value="#2"></reference>
+         </endpoint>
+         <endpoint>
+            <reference value="#3"></reference>
+         </endpoint>
+         <endpoint>
+            <reference value="#4"></reference>
+         </endpoint>
+      </Organization>
+   </contained>
+   <contained>
+      <Practitioner xmlns="http://hl7.org/fhir">
+         <id value="2"></id>
+         <name>
+            <use value="official"></use>
+            <family value="Wackel"></family>
+            <given value="Peter"></given>
+         </name>
+      </Practitioner>
+   </contained>
+   <contained>
+      <Practitioner xmlns="http://hl7.org/fhir">
+         <id value="3"></id>
+         <name>
+            <use value="official"></use>
+            <family value="Wackelina"></family>
+            <given value="Petra"></given>
+         </name>
+      </Practitioner>
+   </contained>
+   <contained>
+      <Encounter xmlns="http://hl7.org/fhir">
+         <id value="4"></id>
+         <status value="planned"></status>
+         <class>
+            <system value="http://terminology.hl7.org/CodeSystem/v3-ActCode"></system>
+            <code value="IMP"></code>
+            <display value="inpatient encounter"></display>
+         </class>
+         <appointment>
+            <reference value="#5"></reference>
+         </appointment>
+      </Encounter>
+   </contained>
+   <contained>
+      <Appointment xmlns="http://hl7.org/fhir">
+         <id value="5"></id>
+         <start value="1846-11-01T14:33:27.862+01:00"></start>
+      </Appointment>
+   </contained>
+   <identifier>
+      <value value="1958"></value>
+   </identifier>
+   <name value="MIO"></name>
+   <address>
+      <city value="Lübeck"></city>
+   </address>
+   <endpoint>
+      <reference value="#1"></reference>
+   </endpoint>
+</Organization>
