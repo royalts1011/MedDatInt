@@ -69,11 +69,14 @@ public class Utils {
 
         //Mar Status
         CodeableConcept marStatus = new CodeableConcept();
-        marStatus.addCoding().setCode("M").setSystem("http://terminology.hl7.org/CodeSystem/v3-MaritalStatus").setDisplay("married");
+        marStatus.addCoding().setCode("M").setSystem("http://terminology.hl7.org/CodeSystem/v3-MaritalStatus").setDisplay("Married");
         antonie.setMaritalStatus(marStatus);
 
+        // Uncomment if the picture is not available or is not wanted in the output
+        // You MUST change the path to the actual full path to the file.
+        String imagePath = "C:\\Users\\kvkue\\git\\MedDatInt\\src\\main\\resources\\PAT_FOTO.png";
         //Picture
-        File file = new File("/Users/falcolentzsch/Develope/FHIR-Project/src/main/resources/PAT_FOTO.png");
+        File file = new File(imagePath);
         byte[] bytes = new byte[(int) file.length()];
         try {
             FileInputStream fileInputStreamReader = new FileInputStream(file);
@@ -89,9 +92,9 @@ public class Utils {
 
         //Write XML and JASON Files
         String outputJSON = this.ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(antonie);
-        writeToFile("newPatientJSON.json", outputJSON);
+        writeToFile("AntonieGruenlich.json", outputJSON);
         String outputXML = this.ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(antonie);
-        writeToFile("newPatientXML.xml", outputXML);
+        writeToFile("AntonieGruenlich.xml", outputXML);
 
         this.pat = antonie;
     }
@@ -203,12 +206,18 @@ public class Utils {
         appoint.setStart(cal.getTime());
         Reference refToAppoint = new Reference(appoint);
 
+        // ReasonCode Birth
+        CodeableConcept reasonBirth = new CodeableConcept();
+        reasonBirth.addCoding().setCode("3950001").setSystem("http://hl7.org/fhir/ValueSet/encounter-reason").setDisplay("Birth");
+
         // from ValueSet https://fhir-ru.github.io/v3/ActEncounterCode/vs.html
-        Coding typeOfEncounter = new Coding("http://terminology.hl7.org/CodeSystem/v3-ActCode", "IMP", "inpatient encounter");
-//        Coding typeOfEncounter = new Coding("http://terminology.hl7.org/CodeSystem/v3-ActCode", "PRENC", "pre-admission");
+//        Coding typeOfEncounter = new Coding("http://terminology.hl7.org/CodeSystem/v3-ActCode", "IMP", "inpatient encounter");
+        Coding typeOfEncounter = new Coding("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode", "PRENC", "pre-admission");
         Encounter doomsday = new Encounter();
         doomsday.setStatus(Encounter.EncounterStatus.PLANNED);
         doomsday.setClass_(typeOfEncounter);
+        // add birth reason
+        doomsday.addReasonCode(reasonBirth);
 
 
         // Connect substancial Encounter parts
