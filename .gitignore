@@ -16,6 +16,5 @@ log/
 target/
 @JJ64938
 
-*.jason
-*.txt
+*.json
 *.xml
