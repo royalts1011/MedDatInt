@@ -1,0 +1,77 @@
+<Organization xmlns="http://hl7.org/fhir">
+   <contained>
+      <Organization xmlns="http://hl7.org/fhir">
+         <id value="1"></id>
+         <identifier>
+            <value value="6025"></value>
+         </identifier>
+         <name value="Geburtsstation"></name>
+         <endpoint>
+            <reference value="#2"></reference>
+         </endpoint>
+         <endpoint>
+            <reference value="#3"></reference>
+         </endpoint>
+         <endpoint>
+            <reference value="#4"></reference>
+         </endpoint>
+      </Organization>
+   </contained>
+   <contained>
+      <Practitioner xmlns="http://hl7.org/fhir">
+         <id value="2"></id>
+         <name>
+            <use value="official"></use>
+            <family value="Wackel"></family>
+            <given value="Peter"></given>
+         </name>
+      </Practitioner>
+   </contained>
+   <contained>
+      <Practitioner xmlns="http://hl7.org/fhir">
+         <id value="3"></id>
+         <name>
+            <use value="official"></use>
+            <family value="Wackelina"></family>
+            <given value="Petra"></given>
+         </name>
+      </Practitioner>
+   </contained>
+   <contained>
+      <Encounter xmlns="http://hl7.org/fhir">
+         <id value="4"></id>
+         <status value="planned"></status>
+         <class>
+            <system value="http://terminology.hl7.org/ValueSet/v3-ActEncounterCode"></system>
+            <code value="PRENC"></code>
+            <display value="pre-admission"></display>
+         </class>
+         <appointment>
+            <reference value="#5"></reference>
+         </appointment>
+         <reasonCode>
+            <coding>
+               <system value="http://hl7.org/fhir/ValueSet/encounter-reason"></system>
+               <code value="3950001"></code>
+               <display value="Birth"></display>
+            </coding>
+         </reasonCode>
+      </Encounter>
+   </contained>
+   <contained>
+      <Appointment xmlns="http://hl7.org/fhir">
+         <id value="5"></id>
+         <start value="1846-11-01T10:20:33.854+01:00"></start>
+      </Appointment>
+   </contained>
+   <identifier>
+      <value value="5900"></value>
+   </identifier>
+   <name value="MIO"></name>
+   <address>
+      <city value="Lübeck"></city>
+   </address>
+   <endpoint>
+      <reference value="#1"></reference>
+   </endpoint>
+</Organization>
