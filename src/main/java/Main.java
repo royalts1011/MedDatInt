@@ -13,7 +13,6 @@ public class Main {
         ImmunizationPass I = new ImmunizationPass(client, ctx);
 
         I.buildImmunizationPass();
-//        I.retrieveDoctors();
     }
 
 

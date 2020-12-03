@@ -42,59 +42,65 @@ public class ImmunizationPass {
 
 
     private void buildImmunizations() {
-        //Date of Immunization.
-        Calendar cal_1 = Calendar.getInstance();
-        cal_1.set(1991, Calendar.JANUARY, 01);
-        //Doc who performed Immunization
-        Practitioner doc_1 = new Practitioner();
-        HumanName doctorsName_1 = new HumanName();
-        doctorsName_1.addPrefix("Dr.").addGiven("Arno").setFamily("Dübel");
-        doc_1.addName(doctorsName_1);
-        doc_1.addQualification().setCode(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v2-0360|2.7", "MD",
-                "Doctor of Medicine")));
-        MethodOutcome doctorOutcome = client.create().resource(doc_1).prettyPrint().encodedJson().execute();
-        doc_1.setId(doctorOutcome.getId());
+        Immunization immu;
+        MethodOutcome methodOutcome;
 
-        // Which Immunization was done.
-        CodeableConcept cod_1 = new CodeableConcept(new Coding("http://hl7.org/fhir/sid/cvx", "37",
-                "yellow fever"));
+        // Get Calendar
+        Calendar cal = Calendar.getInstance();
 
-        //create new Immunization for Patient
-        Immunization Immunization_1 = newImmunization(cod_1, cal_1, doc_1);
-        MethodOutcome immunizationOutcome = client.create().resource(Immunization_1).prettyPrint().encodedJson().execute();
-        Immunization_1.setId(immunizationOutcome.getId());
+
+        /*
+         * create new Immunization for Patient
+         */
+        // set Date
+        cal.set(1991, Calendar.JANUARY, 01);
+        // call creation of Immunization
+        immu = newImmunization(
+                new CodeableConcept(new Coding("http://hl7.org/fhir/sid/cvx", "37",
+                        "yellow fever")),
+                cal,
+                this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size())));
+//        MethodOutcome immunizationOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
+//        immu.setId(immunizationOutcome.getId());
     }
 
     private void buildObservations() {
         Observation ob;
-        MethodOutcome obOutcome;
+        MethodOutcome methodOutcome;
+
+        // Get Calendar
+        Calendar cal = Calendar.getInstance();
 
         /*
          *  Observation/Test: TINE test
          */
+        cal.set(1999,Calendar.SEPTEMBER,25);
         ob = newObservation(
                 new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
                         "10402-6", "Immune serum globulin given [Volume]")),
                 new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-methods.html",
                         "28163009", "Skin test for tuberculosis, Tine test")),
-                new DateTimeType("1999-09-25"),
+                new DateTimeType(cal.getTime()),
+//                new DateTimeType("1999-09-25"),
                 this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
         );
-//        obOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
-//        ob.setId(obOutcome.getId());
+//        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+//        ob.setId(methodOutcome.getId());
 
         /*
          *  Observation/Test: Hepatitis B Schutzimpfung
          */
+        cal.set(2002, Calendar.MAY, 11);
         ob = newObservation(
                 new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
                         "10397-8", "Hepatitis B immune globulin given [Volume]")),
                 null,
-                new DateTimeType("2002-05-11"),
+                new DateTimeType(cal.getTime()),
+//                new DateTimeType("2002-05-11"),
                 this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
         );
-//        obOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
-//        ob.setId(obOutcome.getId());
+//        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+//        ob.setId(methodOutcome.getId());
     }
 
     /**
@@ -120,8 +126,8 @@ public class ImmunizationPass {
         exPatient.setMaritalStatus(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/marital-status", "U",
                 "unmarried")));
 
-        MethodOutcome patientOutcome = client.create().resource(exPatient).prettyPrint().encodedJson().execute();
-        exPatient.setId(patientOutcome.getId());
+//        MethodOutcome patientOutcome = client.create().resource(exPatient).prettyPrint().encodedJson().execute();
+//        exPatient.setId(patientOutcome.getId());
         return exPatient;
     }
 
