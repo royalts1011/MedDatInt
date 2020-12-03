@@ -1,7 +1,8 @@
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r4.model.*;
-import java.util.Calendar;
+
+import java.util.*;
 
 public class ImmunizationPass {
     IGenericClient client;
@@ -31,7 +32,8 @@ public class ImmunizationPass {
         doc_1.addName(doctorsName_1);
         doc_1.addQualification().setCode(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v2-0360|2.7", "MD",
                 "Doctor of Medicine")));
-        MethodOutcome doctorOutcome = client.create().resource(doc_1).prettyPrint().encodedJson().execute();
+        MethodOutcome doctorOutcome = client.create().resource(doc_1).conditional()
+                .where(Practitioner.NAME.matches().value("Dr. Arno Dübel")).prettyPrint().encodedJson().execute();
         doc_1.setId(doctorOutcome.getId());
 
         // Which Immunization was done.
@@ -40,7 +42,8 @@ public class ImmunizationPass {
 
         //create new Immunization for Patient
         Immunization Immunization_1 = newImmunization(cod_1, cal_1, doc_1);
-        MethodOutcome immunizationOutcome = client.create().resource(Immunization_1).prettyPrint().encodedJson().execute();
+        MethodOutcome immunizationOutcome = client.create().resource(Immunization_1).conditional()
+                .where(Immunization.VACCINE_CODE.exactly().code("37")).prettyPrint().encodedJson().execute();
         Immunization_1.setId(immunizationOutcome.getId());
     }
 
