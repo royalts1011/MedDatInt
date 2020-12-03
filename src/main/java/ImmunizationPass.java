@@ -33,17 +33,19 @@ public class ImmunizationPass {
         doc_1.addQualification().setCode(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v2-0360|2.7", "MD",
                 "Doctor of Medicine")));
         MethodOutcome doctorOutcome = client.create().resource(doc_1).conditional()
-                .where(Practitioner.NAME.matches().value("Dr. Arno Dübel")).prettyPrint().encodedJson().execute();
+                .where(Practitioner.FAMILY.matches().value("Arno")).and(Practitioner.GIVEN.matches().value("Dübel"))
+                .prettyPrint().encodedJson().execute();
         doc_1.setId(doctorOutcome.getId());
 
         // Which Immunization was done.
-        CodeableConcept cod_1 = new CodeableConcept(new Coding("http://hl7.org/fhir/sid/cvx", "37",
+        CodeableConcept cod_1 = new CodeableConcept(new Coding("http://hl7.org/fhir/sid/cvx", "38",
                 "yellow fever"));
 
         //create new Immunization for Patient
         Immunization Immunization_1 = newImmunization(cod_1, cal_1, doc_1);
-        MethodOutcome immunizationOutcome = client.create().resource(Immunization_1).conditional()
-                .where(Immunization.VACCINE_CODE.exactly().code("37")).prettyPrint().encodedJson().execute();
+        MethodOutcome immunizationOutcome = client.create().resource(Immunization_1)
+                .conditional().where(Immunization.VACCINE_CODE.exactly().code("38"))    // 38 eventuell nicht mehr der richitge code?
+                .prettyPrint().encodedJson().execute();
         Immunization_1.setId(immunizationOutcome.getId());
     }
 
@@ -56,8 +58,8 @@ public class ImmunizationPass {
         Patient exPatient = new Patient();
         // Official Name
         HumanName exName = new HumanName();
-        exName.addGiven("Jekofa");
-        exName.setFamily("von Krule");
+        exName.addGiven("Jekofa2");
+        exName.setFamily("von Krule2");
         exName.setUse(HumanName.NameUse.OFFICIAL);
         exPatient.addName(exName);
 
@@ -70,7 +72,8 @@ public class ImmunizationPass {
         exPatient.setMaritalStatus(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/marital-status", "U",
                 "unmarried")));
 
-        MethodOutcome patientOutcome = client.create().resource(exPatient).prettyPrint().encodedJson().execute();
+        MethodOutcome patientOutcome = client.create().resource(exPatient).conditional()
+                .where(Practitioner.FAMILY.matches().value("von Krule2")).and(Practitioner.GIVEN.matches().value("Jekofa2")).prettyPrint().encodedJson().execute();
         exPatient.setId(patientOutcome.getId());
         return exPatient;
     }
@@ -96,6 +99,7 @@ public class ImmunizationPass {
 
         //perfomer/actor is required
         exImmunization.addPerformer().setActor(new Reference(doctor));
+
 
         return exImmunization;
     }
