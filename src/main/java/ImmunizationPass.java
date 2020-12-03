@@ -35,7 +35,7 @@ public class ImmunizationPass {
         retrieveDoctors();
 
         // make content
-        buildImmunizations();
+//        buildImmunizations();
         buildObservations();
     }
 
@@ -110,11 +110,10 @@ public class ImmunizationPass {
     public Patient newPatient(){
         // Empty Patient Instance
         Patient exPatient = new Patient();
+
         // Official Name
         HumanName exName = new HumanName();
-        exName.addGiven("Jekofa");
-        exName.setFamily("von Krule");
-        exName.setUse(HumanName.NameUse.OFFICIAL);
+        exName.setUse(HumanName.NameUse.OFFICIAL).addGiven("Jekofa").setFamily("von Krule");
         exPatient.addName(exName);
 
         // Birthday
