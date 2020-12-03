@@ -21,6 +21,9 @@ public class ImmunizationPass {
     // Following List shall be retrieved from the server
     List<Practitioner> doctors_withQuali;
 
+    Immunization testImmu;
+
+
     public ImmunizationPass(IGenericClient client, FhirContext ctx){
         this.client = client;
         this.ctx = ctx;
@@ -52,7 +55,7 @@ public class ImmunizationPass {
      * This method will generate hard coded Immunizations by using the method "newImmunization()".
      * All content of the Immunizations is defined in here.
      */
-    private void buildImmunizations() {
+    public void buildImmunizations() {
         Immunization immu;
         MethodOutcome methodOutcome;
 
@@ -73,6 +76,9 @@ public class ImmunizationPass {
                 this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size())));
         methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
         immu.setId(methodOutcome.getId());
+
+        this.testImmu = immu;
+
     }
 
     /**
@@ -145,7 +151,7 @@ public class ImmunizationPass {
         MethodOutcome patientOutcome = client.create().resource(exPatient).conditional()
                 .where(Practitioner.FAMILY.matches().value("von Krule2"))
                 .and(Practitioner.GIVEN.matches().value("Jekofa2")).prettyPrint().encodedJson().execute();
-        
+
         exPatient.setId(patientOutcome.getId());
         return exPatient;
     }
@@ -276,6 +282,12 @@ public class ImmunizationPass {
     public Bundle getWholeImmunizationPass() {
         return wholeImmunizationPass;
     }
+
+    public Immunization getTestImmu()   {
+        return this.testImmu;
+    }
+
+
 }
 
 
