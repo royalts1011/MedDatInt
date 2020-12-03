@@ -69,8 +69,8 @@ public class ImmunizationPass {
                         "yellow fever")),
                 cal,
                 this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size())));
-//        methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
-//        immu.setId(methodOutcome.getId());
+        methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
+        immu.setId(methodOutcome.getId());
     }
 
     /**
@@ -97,8 +97,8 @@ public class ImmunizationPass {
 //                new DateTimeType("1999-09-25"),
                 this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
         );
-//        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
-//        ob.setId(methodOutcome.getId());
+        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+        ob.setId(methodOutcome.getId());
 
         /*
          *  Observation/Test: Hepatitis B Schutzimpfung
@@ -112,8 +112,8 @@ public class ImmunizationPass {
 //                new DateTimeType("2002-05-11"),
                 this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
         );
-//        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
-//        ob.setId(methodOutcome.getId());
+        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+        ob.setId(methodOutcome.getId());
     }
 
     /**
@@ -139,11 +139,10 @@ public class ImmunizationPass {
                 "unmarried")));
 
         MethodOutcome patientOutcome = client.create().resource(exPatient)
-                    .conditional()
-                    .where(Patient.FAMILY.matches().value("von Krule")).and(Patient.GIVEN.matches().value("Jekofa"))
+//                    .conditional()
+//                    .where(Patient.FAMILY.matches().value("von Krule")).and(Patient.GIVEN.matches().value("Jekofa"))
                     .prettyPrint().encodedJson().execute();
         exPatient.setId(patientOutcome.getId());
-        System.out.println(exPatient.getId());
         return exPatient;
     }
 
