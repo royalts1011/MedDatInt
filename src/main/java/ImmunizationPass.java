@@ -1,15 +1,28 @@
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.util.BundleUtil;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.*;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 public class ImmunizationPass {
+    FhirContext ctx;
     IGenericClient client;
     Patient patient;
     Bundle wholeImmunizationPass;
 
-    public ImmunizationPass(IGenericClient client){
+    // Following List shall be retrieved from the server
+    List<Practitioner> doctors_withQuali;
+
+    public ImmunizationPass(IGenericClient client, FhirContext ctx){
         this.client = client;
+        this.ctx = ctx;
     }
 
     /**
@@ -19,15 +32,23 @@ public class ImmunizationPass {
     public void buildImmunizationPass(){
         //create Patient we want to make the ImmunizationPass for.
         this.patient = newPatient();
+        retrieveDoctors();
+
+        // make content
+        buildImmunizations();
+        buildObservations();
+    }
+
+
+
+    private void buildImmunizations() {
         //Date of Immunization.
         Calendar cal_1 = Calendar.getInstance();
         cal_1.set(1991, Calendar.JANUARY, 01);
         //Doc who performed Immunization
         Practitioner doc_1 = new Practitioner();
         HumanName doctorsName_1 = new HumanName();
-        doctorsName_1.addPrefix("Dr.");
-        doctorsName_1.addGiven("Arno");
-        doctorsName_1.setFamily("Dübel");
+        doctorsName_1.addPrefix("Dr.").addGiven("Arno").setFamily("Dübel");
         doc_1.addName(doctorsName_1);
         doc_1.addQualification().setCode(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v2-0360|2.7", "MD",
                 "Doctor of Medicine")));
@@ -42,6 +63,38 @@ public class ImmunizationPass {
         Immunization Immunization_1 = newImmunization(cod_1, cal_1, doc_1);
         MethodOutcome immunizationOutcome = client.create().resource(Immunization_1).prettyPrint().encodedJson().execute();
         Immunization_1.setId(immunizationOutcome.getId());
+    }
+
+    private void buildObservations() {
+        Observation ob;
+        MethodOutcome obOutcome;
+
+        /*
+         *  Observation/Test: TINE test
+         */
+        ob = newObservation(
+                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
+                        "10402-6", "Immune serum globulin given [Volume]")),
+                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-methods.html",
+                        "28163009", "Skin test for tuberculosis, Tine test")),
+                new DateTimeType("1999-09-25"),
+                this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
+        );
+//        obOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+//        ob.setId(obOutcome.getId());
+
+        /*
+         *  Observation/Test: Hepatitis B Schutzimpfung
+         */
+        ob = newObservation(
+                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
+                        "10397-8", "Hepatitis B immune globulin given [Volume]")),
+                null,
+                new DateTimeType("2002-05-11"),
+                this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
+        );
+//        obOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+//        ob.setId(obOutcome.getId());
     }
 
     /**
@@ -98,12 +151,69 @@ public class ImmunizationPass {
     }
 
     /**
-     * creates a new Observation/Test by given parameters.
-     * @param
+     * This method creates a new Observation/Test by given parameters. Some tests, for example the tuberculosis skin test
+     * (tine-test) does not appear in the Observation.code ValueSet. Therefore an Observation.method must be chosen to
+     * fit the tine-test and thus the Observation.code a normal procedure, e.g. "Immune serum globulin given [Volume]"
+     * If the immune test can be portrayed by the Observation.code or another simple code, the Observation.method shall
+     * be set to null.
+     *
+     * @param conceptTestCode   The code describing the test or the type of treatment
+     * @param conceptMethodCode The code describing the method (e.g. tine-test),
+     *                          set to NULL if not needed
+     * @param dateOfTest        The date of the Observation/test
+     * @param doctor            The doctor leading the performance
+     * @return                  Returns the complete Observation/test
      */
-    public Observation newObservation() {
+    public Observation newObservation(CodeableConcept conceptTestCode, CodeableConcept conceptMethodCode,
+                                      DateTimeType dateOfTest, Practitioner doctor) {
         Observation exObservation = new Observation();
-        return null;
+
+        // status required: FINAL = observation is complete
+        exObservation.setStatus(Observation.ObservationStatus.FINAL);
+
+        // set the performed direct test or treatment type
+        exObservation.setCode(conceptTestCode);
+
+        // Set method (titer skin) if not null
+        if (conceptMethodCode != null) exObservation.setMethod(conceptMethodCode);
+
+        // connect patient to test
+        exObservation.setSubject(new Reference(this.patient));
+
+        // when the test occurred
+        exObservation.setEffective(dateOfTest);
+
+        // who performed the test
+        exObservation.addPerformer(new Reference(doctor));
+
+        // what is the outcome
+//        exObservation.setValue(new BooleanType(true));
+
+        return exObservation;
+    }
+
+    public void retrieveDoctors(){
+        List<Practitioner> doctors = new ArrayList<>();
+//        Bundle bundle = client.search().forResource(Practitioner.class).returnBundle(Bundle.class).execute();
+        Bundle bundle = client.search().forResource(Practitioner.class).returnBundle(Bundle.class).execute();
+        doctors.addAll(BundleUtil.toListOfResourcesOfType(this.ctx, bundle, Practitioner.class));
+
+        // Load the subsequent pages
+        while (bundle.getLink(IBaseBundle.LINK_NEXT) != null) {
+            bundle = client.loadPage().next(bundle).execute();
+            doctors.addAll(BundleUtil.toListOfResourcesOfType(this.ctx, bundle, Practitioner.class));
+        }
+
+        // only choose all doctors with qualifications
+        this.doctors_withQuali = doctors.stream()
+                .filter(d -> d.hasQualification())
+                // there is only one Nurse among these
+                .filter(d -> d.getQualification().get(0).getCode().getCoding().get(0).getCode().equals("MD"))
+                .collect(Collectors.toList());
+
+        System.out.println("Doctor Count: " + doctors.size());
+        System.out.println("Doctor with Quali 'MD' Count: " + this.doctors_withQuali.size());
+
     }
 
     public void setPatient(Patient patient) {
