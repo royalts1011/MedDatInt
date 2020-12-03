@@ -26,21 +26,30 @@ public class ImmunizationPass {
     }
 
     /**
-     * This Method creates a whole ImmunizationPass for Patient exPatient as a Bundle.
-     * @return
+     * This Method serves as the "FHIR"/Fire starter for creating an immunization pass.
+     * A patient will be created and necessary information like doctors, immunizations, immune tests
+     * will be created or polled from the server.
      */
     public void buildImmunizationPass(){
         //create Patient we want to make the ImmunizationPass for.
         this.patient = newPatient();
+        // Poll doctors from the server
         retrieveDoctors();
 
+        // The following code line overwrites the retrieved doctors.
+//        this.doctors_withQuali = setRescueDoc();
+
+
         // make content
-//        buildImmunizations();
+        buildImmunizations();
         buildObservations();
     }
 
 
-
+    /**
+     * This method will generate hard coded Immunizations by using the method "newImmunization()".
+     * All content of the Immunizations is defined in here.
+     */
     private void buildImmunizations() {
         Immunization immu;
         MethodOutcome methodOutcome;
@@ -60,10 +69,14 @@ public class ImmunizationPass {
                         "yellow fever")),
                 cal,
                 this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size())));
-//        MethodOutcome immunizationOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
-//        immu.setId(immunizationOutcome.getId());
+//        methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
+//        immu.setId(methodOutcome.getId());
     }
 
+    /**
+     * This method will generate hard coded Observations (here immune tests) by using the method "newObservation()".
+     * All content of the immune tests is defined in here.
+     */
     private void buildObservations() {
         Observation ob;
         MethodOutcome methodOutcome;
@@ -125,8 +138,12 @@ public class ImmunizationPass {
         exPatient.setMaritalStatus(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/marital-status", "U",
                 "unmarried")));
 
-//        MethodOutcome patientOutcome = client.create().resource(exPatient).prettyPrint().encodedJson().execute();
-//        exPatient.setId(patientOutcome.getId());
+        MethodOutcome patientOutcome = client.create().resource(exPatient)
+                    .conditional()
+                    .where(Patient.FAMILY.matches().value("von Krule")).and(Patient.GIVEN.matches().value("Jekofa"))
+                    .prettyPrint().encodedJson().execute();
+        exPatient.setId(patientOutcome.getId());
+        System.out.println(exPatient.getId());
         return exPatient;
     }
 
@@ -197,9 +214,33 @@ public class ImmunizationPass {
         return exObservation;
     }
 
+    /**
+     * This method can be called if the list of doctors shall only be this one doctor.
+     * E.g. the server got cleaned and no doctors would be found.
+     */
+    private List<Practitioner> setRescueDoc(){
+        Practitioner doc = new Practitioner();
+        HumanName doctorsName = new HumanName();
+        doctorsName.addPrefix("Dr.").addGiven("Arno").setFamily("Dübel");
+        doc.addName(doctorsName);
+        doc.addQualification().setCode(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v2-0360|2.7", "MD",
+                "Doctor of Medicine")));
+        MethodOutcome doctorOutcome = client.create().resource(doc).prettyPrint().encodedJson().execute();
+        doc.setId(doctorOutcome.getId());
+
+        List<Practitioner> rescueDoc = new ArrayList<>();
+        rescueDoc.add(doc);
+        return rescueDoc;
+    }
+
+    /**
+     * This method retrieves all Practitioner objects from the server and converts them to a list.
+     * It will then further filter this list to receive a list of all Practitioners whose Practitioner.qualification
+     * has been set and whose qualification is described with code "MD".
+     * The filtered list will be saved in a Practitioner-List as a class variable
+     */
     public void retrieveDoctors(){
         List<Practitioner> doctors = new ArrayList<>();
-//        Bundle bundle = client.search().forResource(Practitioner.class).returnBundle(Bundle.class).execute();
         Bundle bundle = client.search().forResource(Practitioner.class).returnBundle(Bundle.class).execute();
         doctors.addAll(BundleUtil.toListOfResourcesOfType(this.ctx, bundle, Practitioner.class));
 
@@ -212,7 +253,7 @@ public class ImmunizationPass {
         // only choose all doctors with qualifications
         this.doctors_withQuali = doctors.stream()
                 .filter(d -> d.hasQualification())
-                // there is only one Nurse among these
+                // Drop all objects that are not 'MD'
                 .filter(d -> d.getQualification().get(0).getCode().getCoding().get(0).getCode().equals("MD"))
                 .collect(Collectors.toList());
 
