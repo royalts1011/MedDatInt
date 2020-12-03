@@ -10,10 +10,9 @@ public class Main {
         IGenericClient client = ctx.newRestfulGenericClient(serverBase);
 
         // Make a new ImmunizationPass which has Patient, Immunizations,.....
-        ImmunizationPass I = new ImmunizationPass(client);
+        ImmunizationPass I = new ImmunizationPass(client, ctx);
 
         I.buildImmunizationPass();
-
     }
 
 

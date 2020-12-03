@@ -1,52 +1,121 @@
+import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.util.BundleUtil;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
 
 public class ImmunizationPass {
+    FhirContext ctx;
     IGenericClient client;
     Patient patient;
     Bundle wholeImmunizationPass;
 
-    public ImmunizationPass(IGenericClient client){
+    // Following List shall be retrieved from the server
+    List<Practitioner> doctors_withQuali;
+
+    public ImmunizationPass(IGenericClient client, FhirContext ctx){
         this.client = client;
+        this.ctx = ctx;
     }
 
     /**
-     * This Method creates a whole ImmunizationPass for Patient exPatient as a Bundle.
-     * @return
+     * This Method serves as the "FHIR"/Fire starter for creating an immunization pass.
+     * A patient will be created and necessary information like doctors, immunizations, immune tests
+     * will be created or polled from the server.
      */
     public void buildImmunizationPass(){
         //create Patient we want to make the ImmunizationPass for.
         this.patient = newPatient();
-        //Date of Immunization.
-        Calendar cal_1 = Calendar.getInstance();
-        cal_1.set(1991, Calendar.JANUARY, 01);
-        //Doc who performed Immunization
-        Practitioner doc_1 = new Practitioner();
-        HumanName doctorsName_1 = new HumanName();
-        doctorsName_1.addPrefix("Dr.");
-        doctorsName_1.addGiven("Arno");
-        doctorsName_1.setFamily("Dübel");
-        doc_1.addName(doctorsName_1);
-        doc_1.addQualification().setCode(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v2-0360|2.7", "MD",
-                "Doctor of Medicine")));
-        MethodOutcome doctorOutcome = client.create().resource(doc_1).conditional()
-                .where(Practitioner.FAMILY.matches().value("Arno")).and(Practitioner.GIVEN.matches().value("Dübel"))
-                .prettyPrint().encodedJson().execute();
-        doc_1.setId(doctorOutcome.getId());
 
-        // Which Immunization was done.
-        CodeableConcept cod_1 = new CodeableConcept(new Coding("http://hl7.org/fhir/sid/cvx", "38",
-                "yellow fever"));
+        // Poll doctors from the server
+        retrieveDoctors();
 
-        //create new Immunization for Patient
-        Immunization Immunization_1 = newImmunization(cod_1, cal_1, doc_1);
-        MethodOutcome immunizationOutcome = client.create().resource(Immunization_1)
-                .conditional().where(Immunization.VACCINE_CODE.exactly().code("38"))    // 38 eventuell nicht mehr der richitge code?
-                .prettyPrint().encodedJson().execute();
-        Immunization_1.setId(immunizationOutcome.getId());
+        // The following code line overwrites the retrieved doctors.
+//        this.doctors_withQuali = setRescueDoc();
+
+
+        // make content
+        buildImmunizations();
+        buildObservations();
+    }
+
+
+    /**
+     * This method will generate hard coded Immunizations by using the method "newImmunization()".
+     * All content of the Immunizations is defined in here.
+     */
+    private void buildImmunizations() {
+        Immunization immu;
+        MethodOutcome methodOutcome;
+
+        // Get Calendar
+        Calendar cal = Calendar.getInstance();
+
+
+        /*
+         * create new Immunization for Patient
+         */
+        // set Date
+        cal.set(1991, Calendar.JANUARY, 01);
+        // call creation of Immunization
+        immu = newImmunization(
+                new CodeableConcept(new Coding("http://hl7.org/fhir/sid/cvx", "37",
+                        "yellow fever")),
+                cal,
+                this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size())));
+        methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
+        immu.setId(methodOutcome.getId());
+    }
+
+    /**
+     * This method will generate hard coded Observations (here immune tests) by using the method "newObservation()".
+     * All content of the immune tests is defined in here.
+     */
+    private void buildObservations() {
+        Observation ob;
+        MethodOutcome methodOutcome;
+
+        // Get Calendar
+        Calendar cal = Calendar.getInstance();
+
+        /*
+         *  Observation/Test: TINE test
+         */
+        cal.set(1999,Calendar.SEPTEMBER,25);
+        ob = newObservation(
+                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
+                        "10402-6", "Immune serum globulin given [Volume]")),
+                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-methods.html",
+                        "28163009", "Skin test for tuberculosis, Tine test")),
+                new DateTimeType(cal.getTime()),
+//                new DateTimeType("1999-09-25"),
+                this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
+        );
+        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+        ob.setId(methodOutcome.getId());
+
+        /*
+         *  Observation/Test: Hepatitis B Schutzimpfung
+         */
+        cal.set(2002, Calendar.MAY, 11);
+        ob = newObservation(
+                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
+                        "10397-8", "Hepatitis B immune globulin given [Volume]")),
+                null,
+                new DateTimeType(cal.getTime()),
+//                new DateTimeType("2002-05-11"),
+                this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
+        );
+        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+        ob.setId(methodOutcome.getId());
     }
 
     /**
@@ -56,11 +125,11 @@ public class ImmunizationPass {
     public Patient newPatient(){
         // Empty Patient Instance
         Patient exPatient = new Patient();
+
         // Official Name
         HumanName exName = new HumanName();
-        exName.addGiven("Jekofa2");
-        exName.setFamily("von Krule2");
-        exName.setUse(HumanName.NameUse.OFFICIAL);
+
+        exName.setUse(HumanName.NameUse.OFFICIAL).addGiven("Jekofa2").setFamily("von Krule2");
         exPatient.addName(exName);
 
         // Birthday
@@ -72,8 +141,11 @@ public class ImmunizationPass {
         exPatient.setMaritalStatus(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/marital-status", "U",
                 "unmarried")));
 
+
         MethodOutcome patientOutcome = client.create().resource(exPatient).conditional()
-                .where(Practitioner.FAMILY.matches().value("von Krule2")).and(Practitioner.GIVEN.matches().value("Jekofa2")).prettyPrint().encodedJson().execute();
+                .where(Practitioner.FAMILY.matches().value("von Krule2"))
+                .and(Practitioner.GIVEN.matches().value("Jekofa2")).prettyPrint().encodedJson().execute();
+        
         exPatient.setId(patientOutcome.getId());
         return exPatient;
     }
@@ -105,12 +177,93 @@ public class ImmunizationPass {
     }
 
     /**
-     * creates a new Observation/Test by given parameters.
-     * @param
+     * This method creates a new Observation/Test by given parameters. Some tests, for example the tuberculosis skin test
+     * (tine-test) does not appear in the Observation.code ValueSet. Therefore an Observation.method must be chosen to
+     * fit the tine-test and thus the Observation.code a normal procedure, e.g. "Immune serum globulin given [Volume]"
+     * If the immune test can be portrayed by the Observation.code or another simple code, the Observation.method shall
+     * be set to null.
+     *
+     * @param conceptTestCode   The code describing the test or the type of treatment
+     * @param conceptMethodCode The code describing the method (e.g. tine-test),
+     *                          set to NULL if not needed
+     * @param dateOfTest        The date of the Observation/test
+     * @param doctor            The doctor leading the performance
+     * @return                  Returns the complete Observation/test
      */
-    public Observation newObservation() {
+    public Observation newObservation(CodeableConcept conceptTestCode, CodeableConcept conceptMethodCode,
+                                      DateTimeType dateOfTest, Practitioner doctor) {
         Observation exObservation = new Observation();
-        return null;
+
+        // status required: FINAL = observation is complete
+        exObservation.setStatus(Observation.ObservationStatus.FINAL);
+
+        // set the performed direct test or treatment type
+        exObservation.setCode(conceptTestCode);
+
+        // Set method (titer skin) if not null
+        if (conceptMethodCode != null) exObservation.setMethod(conceptMethodCode);
+
+        // connect patient to test
+        exObservation.setSubject(new Reference(this.patient));
+
+        // when the test occurred
+        exObservation.setEffective(dateOfTest);
+
+        // who performed the test
+        exObservation.addPerformer(new Reference(doctor));
+
+        // what is the outcome
+//        exObservation.setValue(new BooleanType(true));
+
+        return exObservation;
+    }
+
+    /**
+     * This method can be called if the list of doctors shall only be this one doctor.
+     * E.g. the server got cleaned and no doctors would be found.
+     */
+    private List<Practitioner> setRescueDoc(){
+        Practitioner doc = new Practitioner();
+        HumanName doctorsName = new HumanName();
+        doctorsName.addPrefix("Dr.").addGiven("Arno").setFamily("Dübel");
+        doc.addName(doctorsName);
+        doc.addQualification().setCode(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v2-0360|2.7", "MD",
+                "Doctor of Medicine")));
+        MethodOutcome doctorOutcome = client.create().resource(doc).prettyPrint().encodedJson().execute();
+        doc.setId(doctorOutcome.getId());
+
+        List<Practitioner> rescueDoc = new ArrayList<>();
+        rescueDoc.add(doc);
+        return rescueDoc;
+    }
+
+    /**
+     * This method retrieves all Practitioner objects from the server and converts them to a list.
+     * It will then further filter this list to receive a list of all Practitioners whose Practitioner.qualification
+     * has been set and whose qualification is described with code "MD".
+     * The filtered list will be saved in a Practitioner-List as a class variable
+     */
+    public void retrieveDoctors(){
+        List<Practitioner> doctors = new ArrayList<>();
+        Bundle bundle = client.search().forResource(Practitioner.class).returnBundle(Bundle.class).execute();
+        doctors.addAll(BundleUtil.toListOfResourcesOfType(this.ctx, bundle, Practitioner.class));
+
+        // Load the subsequent pages
+        while (bundle.getLink(IBaseBundle.LINK_NEXT) != null) {
+            bundle = client.loadPage().next(bundle).execute();
+            doctors.addAll(BundleUtil.toListOfResourcesOfType(this.ctx, bundle, Practitioner.class));
+        }
+
+        // only choose all doctors with qualifications
+        this.doctors_withQuali = doctors.stream()
+                .filter(d -> d.hasQualification())
+                // Drop all objects that are not 'MD'
+                .filter(d -> d.getQualification().get(0).getCode().getCoding().get(0).getCode().equals("MD"))
+                .collect(Collectors.toList());
+
+        System.out.println("Doctor Count: " + doctors.size());
+        System.out.println("Doctor with Quali 'MD' Count: " + this.doctors_withQuali.size());
+
     }
 
     public void setPatient(Patient patient) {
