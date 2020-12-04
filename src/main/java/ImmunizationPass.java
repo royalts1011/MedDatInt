@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+/**
+ * - Test Immu kann später wieder raus.
+ */
+
 
 public class ImmunizationPass {
     FhirContext ctx;
@@ -40,6 +44,10 @@ public class ImmunizationPass {
     public void buildImmunizationPass(){
         //create Patient we want to make the ImmunizationPass for.
         this.patient = newPatient();
+
+        Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
+        entry.setResource(this.patient);
+        this.wholeImmunizationPass.addEntry(entry) ;
 
         // Poll doctors from the server
         retrieveDoctors();

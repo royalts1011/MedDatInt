@@ -30,8 +30,36 @@ public class HTMLBuilder {
     }
 
     private String InsertTitles(String generated)   {
-        generated = searchAndInsert(generated, "Observation", "\n<h2>Observations</h2>\n");
-        generated = searchAndInsert(generated, "Immunization xmlns", "\n<h2>Vaccinations</h2>\n");
+
+        String tableHeaderImmunisations = "<div>\n" +
+                "                   <table border=\"1\">\n" +
+                "                     <tr>\n" +
+                "                        <td> Date </td>\n" +
+                "                        <td> Vaccine Code </td>\n" +
+                "                        <td> Disease </td>\n" +
+                "                        <td> Performing Doctor</td>\n" +
+                "                     </tr>\n";
+
+        String tableHeaderObservations = "<div>\n" +
+                "                   <table border=\"1\">\n" +
+                "                     <tr>\n" +
+                "                        <td> Date </td>\n" +
+                "                        <td> Test Code </td>\n" +
+                "                        <td> Test </td>\n" +
+                "                        <td> Performing Doctor</td>\n" +
+                "                     </tr>\n";
+
+        generated = searchAndInsert(generated, "Patient", "\n<h2>Patient Data</h2>\n");
+        generated = searchAndInsert(generated, "Observation", "\n</table>\n</div>\n<h2>Immunization Tests</h2>\n" + tableHeaderObservations);
+        generated = searchAndInsert(generated, "Immunization xmlns", "\n<h2>Vaccinations</h2>\n" + tableHeaderImmunisations);
+        return generated;
+    }
+
+    private String enhanceDate(String generated)    {
+        generated = generated.replaceAll("\\d\\d:\\d\\d:\\d\\d CET", "");
+        generated = generated.replaceAll("\\d\\d:\\d\\d:\\d\\d CEST", "");
+        String daypattern = "Mon|Tue|Wed|Thu|Fri|Sat|Sun";
+        generated = generated.replaceAll(daypattern, "");
         return generated;
     }
 
@@ -41,8 +69,9 @@ public class HTMLBuilder {
         // Generate the basic Content
         String genContent = generateBasicsFromBundle(immunizationPass);
 
-        // Insert titles
+        // Some altering of stuff that don t make sense
         genContent = InsertTitles(genContent);
+        genContent = enhanceDate(genContent);
 
         // Load Header
         Path pathToHeaderTemplate = Paths.get("src/main/resources/templ/templ_Header.html");
@@ -53,7 +82,7 @@ public class HTMLBuilder {
             e.printStackTrace();
         }
 
-        String combinedHTML = headerTempl + genContent + "\n</body>\n" + "</html>";
+        String combinedHTML = headerTempl + genContent + "\n</table>\n</div>\n" + "\n</body>\n" + "</html>";
 
         return combinedHTML;
 

@@ -1,0 +1,36 @@
+<!--/*-->
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+        <head>
+            <link rel="stylesheet" type="text/css" href="narrative.css"/>
+
+        </head>
+
+        <body>
+<!--*/-->
+        <div>
+            <table border="1">
+                <tr>
+                    <td>Family Name</td>
+                    <td th:text="${resource.name[0].family}"></td>
+                </tr>
+                <tr>
+                    <td>Given Name</td>
+                    <td th:text="${resource.name[0].given[0]}"></td>
+                </tr>
+                <tr>
+                    <td>Birth Date</td>
+                    <td th:text="${resource.birthDate}"></td>
+                </tr>
+                <tr>
+                    <td>Address</td>
+                    <td th:text="${resource.address}"></td>
+                </tr>
+            </table>
+        </div>
+
+
+
+<!--/*-->
+        </body>
+    </html>
+<!--*/-->
