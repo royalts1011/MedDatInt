@@ -1,0 +1,37 @@
+<!--/*-->
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="narrative.css"/>
+
+</head>
+
+<body>
+<!--*/-->
+<div>
+
+    <h1>Immunization Pass</h1>
+
+    <table border="1">
+        <tr>
+            <td style="font-weight: bold;">Date</td>
+            <td style="font-weight: bold;">Vaccine Code</td>
+            <td style="font-weight: bold;">Vaccine Name</td>
+            <td style="font-weight: bold;">Performer</td>
+        </tr>
+
+        <tr>
+            <td th:text="${resource.entry[0].occurrence.value}"></td>
+            <td th:text="${resource.entry[0].vaccineCode.coding[0].code}"></td>
+            <td th:text="${resource.entry[0].vaccineCode.coding[0].display}"></td>
+            <td th:text="${resource.entry[0].performer[0].actor}"></td>
+        </tr>
+
+    </table>
+</div>
+
+
+
+<!--/*-->
+</body>
+</html>
+<!--*/-->

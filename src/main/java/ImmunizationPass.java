@@ -27,6 +27,9 @@ public class ImmunizationPass {
     public ImmunizationPass(IGenericClient client, FhirContext ctx){
         this.client = client;
         this.ctx = ctx;
+
+        this.wholeImmunizationPass = new Bundle();
+        this.wholeImmunizationPass.setType(Bundle.BundleType.DOCUMENT);
     }
 
     /**
@@ -79,6 +82,14 @@ public class ImmunizationPass {
 
         this.testImmu = immu;
 
+        Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
+        entry.setResource(immu);
+
+        this.wholeImmunizationPass.addEntry(entry) ;
+        this.wholeImmunizationPass.addEntry(entry) ;
+        this.wholeImmunizationPass.addEntry(entry) ;
+        this.wholeImmunizationPass.addEntry(entry) ;
+
     }
 
     /**
@@ -122,6 +133,15 @@ public class ImmunizationPass {
         );
         methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
         ob.setId(methodOutcome.getId());
+
+        Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
+        entry.setResource(ob);
+
+        this.wholeImmunizationPass.addEntry(entry) ;
+        this.wholeImmunizationPass.addEntry(entry) ;
+        this.wholeImmunizationPass.addEntry(entry) ;
+
+
     }
 
     /**

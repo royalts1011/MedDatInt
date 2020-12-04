@@ -1,6 +1,7 @@
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Immunization;
 
 import java.io.File;
@@ -20,17 +21,11 @@ public class Main {
 
         I.buildImmunizationPass();
 
+        Bundle immuPass = I.getWholeImmunizationPass();
 
-        FhirContext narrCtx = FhirContext.forR4();
-        String propFile = "file:src/main/resources/ImmuPass.properties";
-        CustomThymeleafNarrativeGenerator gen = new CustomThymeleafNarrativeGenerator(propFile);
+        HTMLBuilder builder = new HTMLBuilder();
 
-        narrCtx.setNarrativeGenerator(gen);
-
-        Immunization immu = I.getTestImmu();
-
-
-        String genNarr = narrCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(immu);
+        String genNarr = builder.enhancePass(immuPass);
 
         File file = new File("output/testscript.html");
         try (FileWriter fileWriter = new FileWriter(file)) {

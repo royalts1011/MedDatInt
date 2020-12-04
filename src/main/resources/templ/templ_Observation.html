@@ -10,10 +10,10 @@
         <div>
             <table border="1">
                 <tr>
-                    <td th:text="${resource.occurrence.value}"></td>
-                    <td th:text="${resource.vaccineCode.coding[0].code}"></td>
-                    <td th:text="${resource.vaccineCode.coding[0].display}"></td>
-                    <td th:text="${resource.performer[0].actor}"></td>
+                    <td th:text="${resource.effective.value}"></td>
+                    <td th:text="${resource.code.coding[0].code}"></td>
+                    <td th:text="${resource.code.coding[0].display}"></td>
+                    <td th:text="${resource.performer[0]}"></td>
                 </tr>
             </table>
         </div>
