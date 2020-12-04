@@ -21,13 +21,13 @@ public class Main {
 
         I.buildImmunizationPass();
 
+        // get the bundle to be able to generate visualisation
         Bundle immuPass = I.getWholeImmunizationPass();
-
         HTMLBuilder builder = new HTMLBuilder();
-
         String genNarr = builder.enhancePass(immuPass);
 
-        File file = new File("output/testscript.html");
+        // write HTML File to output directory
+        File file = new File("output/pass_visu.html");
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(genNarr);
             fileWriter.flush();
