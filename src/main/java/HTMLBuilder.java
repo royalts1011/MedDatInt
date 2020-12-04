@@ -30,6 +30,7 @@ public class HTMLBuilder {
     }
 
     private String InsertTitles(String generated)   {
+        generated = generated.replaceAll("<table>|</table>|<div>|</div>", "");
 
         String tableHeaderImmunisations = "<div>\n" +
                 "                   <table border=\"1\">\n" +
@@ -49,9 +50,9 @@ public class HTMLBuilder {
                 "                        <td> Performing Doctor</td>\n" +
                 "                     </tr>\n";
 
-        generated = searchAndInsert(generated, "Patient", "\n<h2>Patient Data</h2>\n");
+        generated = searchAndInsert(generated, "Patient", "\n<h2>Patient Data</h2>\n" + "<div>\n" + "<table border=\"1\">\n");
         generated = searchAndInsert(generated, "Observation", "\n</table>\n</div>\n<h2>Immunization Tests</h2>\n" + tableHeaderObservations);
-        generated = searchAndInsert(generated, "Immunization xmlns", "\n<h2>Vaccinations</h2>\n" + tableHeaderImmunisations);
+        generated = searchAndInsert(generated, "Immunization xmlns", "\n</table>\n</div>\n<h2>Vaccinations</h2>\n" + tableHeaderImmunisations);
         return generated;
     }
 
