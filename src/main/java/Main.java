@@ -26,6 +26,7 @@ public class Main {
         HTMLBuilder builder = new HTMLBuilder();
         String genNarr = builder.enhancePass(immuPass);
 
+
         // write HTML File to output directory
         File file = new File("output/pass_visu.html");
         try (FileWriter fileWriter = new FileWriter(file)) {
