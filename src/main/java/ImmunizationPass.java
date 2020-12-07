@@ -191,8 +191,8 @@ public class ImmunizationPass {
         }});
 
         // alternate Textform of the address that could be used if wanted.
-        patAddress.setText( "Orgelallee 8,\n" +
-                            "14114 Hamburg\n" +
+        patAddress.setText( "Orgelallee 8, " +
+                            "14114 Hamburg, " +
                             "Germany");
 
         exPatient.addAddress(patAddress);
