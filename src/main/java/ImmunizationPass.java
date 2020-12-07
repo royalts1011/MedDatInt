@@ -70,33 +70,37 @@ public class ImmunizationPass {
         Immunization immu;
         MethodOutcome methodOutcome;
 
-        // Get Calendar
-        Calendar cal = Calendar.getInstance();
-
-
-        /*
-         * create new Immunization for Patient
-         */
-        // set Date
-        cal.set(1991, Calendar.JANUARY, 01);
-        // call creation of Immunization
-        immu = newImmunization(
-                new CodeableConcept(new Coding("http://hl7.org/fhir/sid/cvx", "37",
-                        "yellow fever")),
-                cal,
-                this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size())));
-        methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
-        immu.setId(methodOutcome.getId());
-
-        this.testImmu = immu;
-
-        Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
-        entry.setResource(immu);
-
-        this.wholeImmunizationPass.addEntry(entry) ;
-        this.wholeImmunizationPass.addEntry(entry) ;
-        this.wholeImmunizationPass.addEntry(entry) ;
-        this.wholeImmunizationPass.addEntry(entry) ;
+        ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
+        immuInfo.add(new ArrayList<String>() {{
+            add("1991-01-01"); add("http://hl7.org/fhir/sid/cvx"); add("37"); add("yellow fever");
+        }});
+        immuInfo.add(new ArrayList<String>() {{
+            add("1993-07-14"); add("http://hl7.org/fhir/sid/cvx"); add("18"); add("rabies, intramuscular injection");
+        }});
+        immuInfo.add(new ArrayList<String>() {{
+            add("1993-11-10"); add("urn:oid:1.2.36.1.2001.1005.17"); add("GNFLU"); add("Influenza");
+        }});
+        immuInfo.add(new ArrayList<String>() {{
+            add("1993-08-10"); add("urn:oid:1.2.36.1.2001.1005.17"); add("GNMUM"); add("Mumps");
+        }});
+        immuInfo.add(new ArrayList<String>() {{
+            add("1993-08-10"); add("urn:oid:1.2.36.1.2001.1005.17"); add("GNMEA"); add("Measles");
+        }});
+        immuInfo.add(new ArrayList<String>() {{
+            add("1992-03-01"); add("urn:oid:1.2.36.1.2001.1005.17"); add("GNTET"); add("Tetanus");
+        }});
+        immuInfo.add(new ArrayList<String>() {{
+            add("1992-05-25"); add("urn:oid:1.2.36.1.2001.1005.17"); add("GNRUB"); add("Rubella");
+        }});
+        for (ArrayList<String> sublist : immuInfo){
+            immu = newImmunization(
+                    new CodeableConcept(new Coding(sublist.get(1), sublist.get(2), sublist.get(3))),
+                    sublist.get(0),
+                    this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size())));
+//            methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
+//            immu.setId(methodOutcome.getId());
+            this.wholeImmunizationPass.addEntry(new Bundle.BundleEntryComponent().setResource(immu));
+        }
 
     }
 
@@ -124,8 +128,8 @@ public class ImmunizationPass {
 //                new DateTimeType("1999-09-25"),
                 this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
         );
-        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
-        ob.setId(methodOutcome.getId());
+//        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+//        ob.setId(methodOutcome.getId());
 
         /*
          *  Observation/Test: Hepatitis B Schutzimpfung
@@ -139,8 +143,8 @@ public class ImmunizationPass {
 //                new DateTimeType("2002-05-11"),
                 this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
         );
-        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
-        ob.setId(methodOutcome.getId());
+//        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+//        ob.setId(methodOutcome.getId());
 
         Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
         entry.setResource(ob);
@@ -210,7 +214,7 @@ public class ImmunizationPass {
      * creates a new Immunization by given parameters.
      * @param conceptVaccineCode
      */
-    public Immunization newImmunization(CodeableConcept conceptVaccineCode, Calendar occurrenceDate, Practitioner doctor){
+    public Immunization newImmunization(CodeableConcept conceptVaccineCode, String occurrenceDate, Practitioner doctor){
         Immunization exImmunization = new Immunization();
 
         //status is required
@@ -223,7 +227,7 @@ public class ImmunizationPass {
         exImmunization.setPatient(new Reference(this.patient));
 
         //occurence is required
-        exImmunization.setOccurrence(new DateTimeType(occurrenceDate.getTime()));
+        exImmunization.setOccurrence(new DateTimeType(occurrenceDate));
 
         //perfomer/actor is required
         exImmunization.addPerformer().setActor(new Reference(doctor));
