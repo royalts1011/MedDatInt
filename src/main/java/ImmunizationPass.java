@@ -163,7 +163,7 @@ public class ImmunizationPass {
         // Official Name
         HumanName exName = new HumanName();
 
-        exName.setUse(HumanName.NameUse.OFFICIAL).addGiven("Jekofa2").setFamily("von Krule2");
+        exName.setUse(HumanName.NameUse.OFFICIAL).addGiven("Jekofa3").setFamily("von Krule3");
         exPatient.addName(exName);
 
         // Birthday
@@ -180,7 +180,7 @@ public class ImmunizationPass {
         // BOTH physical and postal address (HOME)
         patAddress.setType(Address.AddressType.BOTH).setUse(Address.AddressUse.HOME);
         patAddress  .setCountry("Germany")
-                    .setCity("Lübeck")
+                    .setCity("Hamburg")
         // 1 ei, 4 Zigaretten, 1 Ibuprofen, 1 Rosinenbroetchen mit Leberwurst, dann kommt Bier/Vier ins Spiel
                     .setPostalCode("14114");
 
@@ -192,14 +192,15 @@ public class ImmunizationPass {
 
         // alternate Textform of the address that could be used if wanted.
         patAddress.setText( "Orgelallee 8,\n" +
-                            "14114 Lübeck\n" +
+                            "14114 Hamburg\n" +
                             "Germany");
 
         exPatient.addAddress(patAddress);
 
+
         MethodOutcome patientOutcome = client.create().resource(exPatient).conditional()
-                .where(Practitioner.FAMILY.matches().value("von Krule2"))
-                .and(Practitioner.GIVEN.matches().value("Jekofa2")).prettyPrint().encodedJson().execute();
+                .where(Practitioner.FAMILY.matches().value("von Krule3"))
+                .and(Practitioner.GIVEN.matches().value("Jekofa3")).prettyPrint().encodedJson().execute();
 
         exPatient.setId(patientOutcome.getId());
         return exPatient;
