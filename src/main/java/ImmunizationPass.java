@@ -175,6 +175,27 @@ public class ImmunizationPass {
         exPatient.setMaritalStatus(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/marital-status", "U",
                 "unmarried")));
 
+        // Create and add address
+        Address patAddress = new Address();
+        // BOTH physical and postal address (HOME)
+        patAddress.setType(Address.AddressType.BOTH).setUse(Address.AddressUse.HOME);
+        patAddress  .setCountry("Germany")
+                    .setCity("Lübeck")
+        // 1 ei, 4 Zigaretten, 1 Ibuprofen, 1 Rosinenbroetchen mit Leberwurst, dann kommt Bier/Vier ins Spiel
+                    .setPostalCode("14114");
+
+        // Adding structured street and number information
+        patAddress.setLine(new ArrayList<StringType>() {{
+                                add(new StringType("Orgelallee"));
+                                add(new StringType("8"));
+        }});
+
+        // alternate Textform of the address that could be used if wanted.
+        patAddress.setText( "Orgelallee 8,\n" +
+                            "14114 Lübeck\n" +
+                            "Germany");
+
+        exPatient.addAddress(patAddress);
 
         MethodOutcome patientOutcome = client.create().resource(exPatient).conditional()
                 .where(Practitioner.FAMILY.matches().value("von Krule2"))
