@@ -12,11 +12,11 @@ public class ImmunizationPass {
     IGenericClient client;
     Patient patient;
 
+
     Composition totalImmunizationPass;
-
     // Following List shall be retrieved from the server
-    ArrayList<PractitionerRole> doctorRoles;
 
+    ArrayList<PractitionerRole> doctorRoles;
 
 
     public ImmunizationPass(IGenericClient client, FhirContext ctx){
@@ -41,8 +41,11 @@ public class ImmunizationPass {
         // make content
         buildComposition();
         ImmunizationBuilder iB = new ImmunizationBuilder(totalImmunizationPass, this.patient, this.doctorRoles, this.client);
+        iB.buildYellowFeverImmunization();
         //ObservationBuilder oB = new ObservationBuilder(totalImmunizationPass, this.patient, this.doctorRoles, this.client);
 
+        MethodOutcome compositionOutcome = client.create().resource(this.totalImmunizationPass).prettyPrint().encodedJson().execute();
+        this.totalImmunizationPass.setId(compositionOutcome.getId());
     }
 
     /**
@@ -61,11 +64,6 @@ public class ImmunizationPass {
         this.totalImmunizationPass.addSection(new Composition.SectionComponent()
                 .setTitle("Name of the cardholder")
                 .addEntry(new Reference(this.patient)));
-
-
-        MethodOutcome compositionOutcome = client.create().resource(this.totalImmunizationPass).prettyPrint().encodedJson().execute();
-        this.totalImmunizationPass.setId(compositionOutcome.getId());
-
     }
 
     /**
@@ -116,7 +114,7 @@ public class ImmunizationPass {
                             "Germany");
 
         exPatient.addAddress(patAddress);
-        
+
         MethodOutcome patientOutcome = client.create().resource(exPatient).conditional()
                 .where(Practitioner.FAMILY.matches().value(lastName))
                 .and(Practitioner.GIVEN.matches().value(firstName)).prettyPrint().encodedJson().execute();
@@ -142,6 +140,10 @@ public class ImmunizationPass {
         List<Practitioner> rescueDoc = new ArrayList<>();
         rescueDoc.add(doc);
         return rescueDoc;
+    }
+
+    public Composition getTotalImmunizationPass() {
+        return totalImmunizationPass;
     }
 
 }
