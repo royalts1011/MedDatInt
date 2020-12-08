@@ -18,20 +18,18 @@ import java.util.stream.Collectors;
 
 
 public class ImmunizationPass {
-    FhirContext ctx;
     IGenericClient client;
     Patient patient;
 
     Composition totalImmunizationPass;
 
     // Following List shall be retrieved from the server
-    List<Practitioner> doctors_withQuali;
+    ArrayList<PractitionerRole> doctorRoles;
 
 
 
     public ImmunizationPass(IGenericClient client, FhirContext ctx){
         this.client = client;
-        this.ctx = ctx;
         this.totalImmunizationPass = new Composition();
     }
 
@@ -44,8 +42,9 @@ public class ImmunizationPass {
         //create Patient we want to make the ImmunizationPass for.
         this.patient = newPatient();
 
-        // Poll doctors from the server
-        retrieveDoctors();
+        // Create a hospital and doctors
+        HospitalBuilder hB = new HospitalBuilder(client);
+        doctorRoles = hB.getdoctorRoles();
 
         // make content
         buildComposition();
@@ -113,7 +112,7 @@ public class ImmunizationPass {
 //            methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
 //            ob.setId(methodOutcome.getId());
             // add to immunization pass bundle
-            this.wholeImmunizationPass.addEntry(new Bundle.BundleEntryComponent().setResource(ob));
+//            this.wholeImmunizationPass.addEntry(new Bundle.BundleEntryComponent().setResource(ob));
         }
 
     }
@@ -236,34 +235,6 @@ public class ImmunizationPass {
         return rescueDoc;
     }
 
-    /**
-     * This method retrieves all Practitioner objects from the server and converts them to a list.
-     * It will then further filter this list to receive a list of all Practitioners whose Practitioner.qualification
-     * has been set and whose qualification is described with code "MD".
-     * The filtered list will be saved in a Practitioner-List as a class variable
-     */
-    public void retrieveDoctors(){
-        List<Practitioner> doctors = new ArrayList<>();
-        Bundle bundle = client.search().forResource(Practitioner.class).returnBundle(Bundle.class).execute();
-        doctors.addAll(BundleUtil.toListOfResourcesOfType(this.ctx, bundle, Practitioner.class));
-
-        // Load the subsequent pages
-        while (bundle.getLink(IBaseBundle.LINK_NEXT) != null) {
-            bundle = client.loadPage().next(bundle).execute();
-            doctors.addAll(BundleUtil.toListOfResourcesOfType(this.ctx, bundle, Practitioner.class));
-        }
-
-        // only choose all doctors with qualifications
-        this.doctors_withQuali = doctors.stream()
-                .filter(d -> d.hasQualification())
-                // Drop all objects that are not 'MD'
-                .filter(d -> d.getQualification().get(0).getCode().getCoding().get(0).getCode().equals("MD"))
-                .collect(Collectors.toList());
-
-        System.out.println("Doctor Count: " + doctors.size());
-        System.out.println("Doctor with Quali 'MD' Count: " + this.doctors_withQuali.size());
-
-    }
 
     public void setPatient(Patient patient) {
         this.patient = patient;
