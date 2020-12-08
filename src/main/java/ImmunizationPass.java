@@ -44,6 +44,7 @@ public class ImmunizationPass {
 
         // Create a hospital and doctors
         HospitalBuilder hB = new HospitalBuilder(client);
+        hB.buildHospital();
         doctorRoles = hB.getdoctorRoles();
 
         // make content

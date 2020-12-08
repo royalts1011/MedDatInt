@@ -18,7 +18,9 @@ public class HospitalBuilder {
 
     public HospitalBuilder(IGenericClient client){
         this.client = client;
+    }
 
+    public void buildHospital(){
         doctorRoles = new ArrayList<>();
         makeOrganizations();
         makeDoctors();
