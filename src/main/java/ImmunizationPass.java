@@ -21,20 +21,18 @@ public class ImmunizationPass {
     FhirContext ctx;
     IGenericClient client;
     Patient patient;
-    Bundle wholeImmunizationPass;
+
+    Composition totalImmunizationPass;
 
     // Following List shall be retrieved from the server
     List<Practitioner> doctors_withQuali;
 
-    Immunization testImmu;
 
 
     public ImmunizationPass(IGenericClient client, FhirContext ctx){
         this.client = client;
         this.ctx = ctx;
-
-        this.wholeImmunizationPass = new Bundle();
-        this.wholeImmunizationPass.setType(Bundle.BundleType.DOCUMENT);
+        this.totalImmunizationPass = new Composition();
     }
 
     /**
@@ -46,65 +44,34 @@ public class ImmunizationPass {
         //create Patient we want to make the ImmunizationPass for.
         this.patient = newPatient();
 
-        Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
-        entry.setResource(this.patient);
-        this.wholeImmunizationPass.addEntry(entry) ;
-
         // Poll doctors from the server
         retrieveDoctors();
 
-        // The following code line overwrites the retrieved doctors.
-//        this.doctors_withQuali = setRescueDoc();
-
-
         // make content
-        buildImmunizations();
-        buildObservations();
+        buildComposition();
+        ImmunizationBuilder iB = new ImmunizationBuilder(totalImmunizationPass, this.patient);
     }
-
 
     /**
-     * This method will generate hard coded Immunizations by using the method "newImmunization()".
-     * All content of the Immunizations is defined in here.
+     * Thismethid will generate a Composition as our "International Certificates of Vaccination"
      */
-    public void buildImmunizations() {
-        Immunization immu;
-        MethodOutcome methodOutcome;
+    public void buildComposition(){
+        totalImmunizationPass.setStatus(Composition.CompositionStatus.FINAL);
+        totalImmunizationPass.setType(new CodeableConcept(new Coding("http://loinc.org", "11503-0",
+                "Medical records")));
+        totalImmunizationPass.setCategory((List<CodeableConcept>) new CodeableConcept(new Coding("http://loinc.org", "11369-6",
+                "History of Immunization Narrative")));
+        totalImmunizationPass.setDate(Calendar.getInstance().getTime());
+       // totalImmunizationPass.addAuthor()
 
-        ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
-        immuInfo.add(new ArrayList<String>() {{
-            add("1991-01-01"); add("http://hl7.org/fhir/sid/cvx"); add("37"); add("yellow fever");
-        }});
-        immuInfo.add(new ArrayList<String>() {{
-            add("1993-07-14"); add("http://hl7.org/fhir/sid/cvx"); add("18"); add("rabies, intramuscular injection");
-        }});
-        immuInfo.add(new ArrayList<String>() {{
-            add("1993-11-10"); add("urn:oid:1.2.36.1.2001.1005.17"); add("GNFLU"); add("Influenza");
-        }});
-        immuInfo.add(new ArrayList<String>() {{
-            add("1993-08-10"); add("urn:oid:1.2.36.1.2001.1005.17"); add("GNMUM"); add("Mumps");
-        }});
-        immuInfo.add(new ArrayList<String>() {{
-            add("1993-08-10"); add("urn:oid:1.2.36.1.2001.1005.17"); add("GNMEA"); add("Measles");
-        }});
-        immuInfo.add(new ArrayList<String>() {{
-            add("1992-03-01"); add("urn:oid:1.2.36.1.2001.1005.17"); add("GNTET"); add("Tetanus");
-        }});
-        immuInfo.add(new ArrayList<String>() {{
-            add("1992-05-25"); add("urn:oid:1.2.36.1.2001.1005.17"); add("GNRUB"); add("Rubella");
-        }});
-
-        for (ArrayList<String> sublist : immuInfo){
-            immu = newImmunization(
-                    new CodeableConcept(new Coding(sublist.get(1), sublist.get(2), sublist.get(3))),
-                    sublist.get(0),
-                    this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size())));
-//            methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
-//            immu.setId(methodOutcome.getId());
-            this.wholeImmunizationPass.addEntry(new Bundle.BundleEntryComponent().setResource(immu));
-        }
+        totalImmunizationPass.setTitle("International Certificates of Vaccination");
+        totalImmunizationPass.addSection(new Composition.SectionComponent()
+                .setTitle("Name of the cardholder")
+                .addEntry(new Reference(this.patient)));
 
     }
+
+
 
     /**
      * This method will generate hard coded Observations (here immune tests) by using the method "newObservation()".
@@ -209,32 +176,6 @@ public class ImmunizationPass {
     }
 
     /**
-     * creates a new Immunization by given parameters.
-     * @param conceptVaccineCode
-     */
-    public Immunization newImmunization(CodeableConcept conceptVaccineCode, String occurrenceDate, Practitioner doctor){
-        Immunization exImmunization = new Immunization();
-
-        //status is required
-        exImmunization.setStatus(Immunization.ImmunizationStatus.COMPLETED);
-
-        //vaccineCode is required
-        exImmunization.setVaccineCode(conceptVaccineCode);
-
-        //patient is required
-        exImmunization.setPatient(new Reference(this.patient));
-
-        //occurence is required
-        exImmunization.setOccurrence(new DateTimeType(occurrenceDate));
-
-        //perfomer/actor is required
-        exImmunization.addPerformer().setActor(new Reference(doctor));
-
-
-        return exImmunization;
-    }
-
-    /**
      * This method creates a new Observation/Test by given parameters. Some tests, for example the tuberculosis skin test
      * (tine-test) does not appear in the Observation.code ValueSet. Therefore an Observation.method must be chosen to
      * fit the tine-test and thus the Observation.code a normal procedure, e.g. "Immune serum globulin given [Volume]"
@@ -330,15 +271,6 @@ public class ImmunizationPass {
     public Patient getExPatient() {
         return patient;
     }
-
-    public Bundle getWholeImmunizationPass() {
-        return wholeImmunizationPass;
-    }
-
-    public Immunization getTestImmu()   {
-        return this.testImmu;
-    }
-
 
 }
 
