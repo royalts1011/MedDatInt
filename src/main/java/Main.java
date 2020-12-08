@@ -1,8 +1,6 @@
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Immunization;
 
 import java.io.File;
 import java.io.FileWriter;
