@@ -5,6 +5,7 @@ import ca.uhn.fhir.util.BundleUtil;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -92,6 +93,7 @@ public class ImmunizationPass {
         immuInfo.add(new ArrayList<String>() {{
             add("1992-05-25"); add("urn:oid:1.2.36.1.2001.1005.17"); add("GNRUB"); add("Rubella");
         }});
+
         for (ArrayList<String> sublist : immuInfo){
             immu = newImmunization(
                     new CodeableConcept(new Coding(sublist.get(1), sublist.get(2), sublist.get(3))),
@@ -109,50 +111,43 @@ public class ImmunizationPass {
      * All content of the immune tests is defined in here.
      */
     private void buildObservations() {
-        Observation ob;
-        MethodOutcome methodOutcome;
 
-        // Get Calendar
-        Calendar cal = Calendar.getInstance();
+        MethodOutcome methodOutcome;
+        ArrayList<Observation> obs = new ArrayList<>();
 
         /*
          *  Observation/Test: TINE test
          */
-        cal.set(1999,Calendar.SEPTEMBER,25);
-        ob = newObservation(
+        obs.add( newObservation(
                 new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
                         "10402-6", "Immune serum globulin given [Volume]")),
                 new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-methods.html",
                         "28163009", "Skin test for tuberculosis, Tine test")),
-                new DateTimeType(cal.getTime()),
-//                new DateTimeType("1999-09-25"),
+                new DateTimeType("1999-09-25"),
                 this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
+                )
         );
-//        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
-//        ob.setId(methodOutcome.getId());
 
         /*
          *  Observation/Test: Hepatitis B Schutzimpfung
          */
-        cal.set(2002, Calendar.MAY, 11);
-        ob = newObservation(
+        obs.add(newObservation(
                 new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
                         "10397-8", "Hepatitis B immune globulin given [Volume]")),
                 null,
-                new DateTimeType(cal.getTime()),
-//                new DateTimeType("2002-05-11"),
+                new DateTimeType("2002-05-11"),
                 this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
+                )
         );
-//        methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
-//        ob.setId(methodOutcome.getId());
 
-        Bundle.BundleEntryComponent entry = new Bundle.BundleEntryComponent();
-        entry.setResource(ob);
 
-        this.wholeImmunizationPass.addEntry(entry) ;
-        this.wholeImmunizationPass.addEntry(entry) ;
-        this.wholeImmunizationPass.addEntry(entry) ;
-
+        for( Observation ob : obs){
+            // Put on server and receive ID
+//            methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+//            ob.setId(methodOutcome.getId());
+            // add to immunization pass bundle
+            this.wholeImmunizationPass.addEntry(new Bundle.BundleEntryComponent().setResource(ob));
+        }
 
     }
 
@@ -164,15 +159,19 @@ public class ImmunizationPass {
         // Empty Patient Instance
         Patient exPatient = new Patient();
 
+        // declare names for setting and checking (in the conditional create)
+        String firstName = "Jekofa3";
+        String lastName = "von Krule3";
+
         // Official Name
         HumanName exName = new HumanName();
 
-        exName.setUse(HumanName.NameUse.OFFICIAL).addGiven("Jekofa3").setFamily("von Krule3");
+        exName.setUse(HumanName.NameUse.OFFICIAL).addGiven(firstName).setFamily(lastName);
         exPatient.addName(exName);
 
         // Birthday
         Calendar cal = Calendar.getInstance();
-        cal.set(1992, Calendar.NOVEMBER, 10);
+        cal.set(1990, Calendar.MAY, 10);
         exPatient.setBirthDate(cal.getTime());
 
         // MaritalStatus
@@ -200,11 +199,10 @@ public class ImmunizationPass {
                             "Germany");
 
         exPatient.addAddress(patAddress);
-
-
+        
         MethodOutcome patientOutcome = client.create().resource(exPatient).conditional()
-                .where(Practitioner.FAMILY.matches().value("von Krule3"))
-                .and(Practitioner.GIVEN.matches().value("Jekofa3")).prettyPrint().encodedJson().execute();
+                .where(Practitioner.FAMILY.matches().value(lastName))
+                .and(Practitioner.GIVEN.matches().value(firstName)).prettyPrint().encodedJson().execute();
 
         exPatient.setId(patientOutcome.getId());
         return exPatient;
