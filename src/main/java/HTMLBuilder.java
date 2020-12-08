@@ -1,6 +1,7 @@
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.narrative.CustomThymeleafNarrativeGenerator;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.Composition;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -23,11 +24,11 @@ public class HTMLBuilder {
     }
 
     /**
-     * Invokes the generation of the basic HTML for the Immunization pass from the given Bundle
+     * Invokes the generation of the basic HTML for the Immunization pass from the given Composition
      * @param immunizationPass
      * @return String of basic XHTML
      */
-    private String generateBasicsFromBundle(Bundle immunizationPass) {
+    private String generateBasicsFromCompositin(Composition immunizationPass) {
         return this.narrativeCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(immunizationPass);
     }
 
@@ -97,14 +98,14 @@ public class HTMLBuilder {
      * @param immunizationPass
      * @return
      */
-    public String enhancePass(Bundle immunizationPass) {
+    public String enhancePass(Composition immunizationPass) {
 
         // Generate the basic Content
-        String genContent = generateBasicsFromBundle(immunizationPass);
+        String genContent = generateBasicsFromCompositin(immunizationPass);
 
         // Some altering of stuff that don t make sense
-        genContent = InsertTitles(genContent);
-        genContent = enhanceDate(genContent);
+       //genContent = InsertTitles(genContent);
+       genContent = enhanceDate(genContent);
 
         // Load Header
         Path pathToHeaderTemplate = Paths.get("src/main/resources/templ/templ_Header.html");
@@ -116,6 +117,7 @@ public class HTMLBuilder {
         }
 
         // Stitching everything together, also adding last closing tags
+
         String combinedHTML = headerTempl + genContent + "\n</table>\n</div>\n" + "\n</body>\n" + "</html>";
 
         return combinedHTML;
