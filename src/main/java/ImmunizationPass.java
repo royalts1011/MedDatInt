@@ -48,7 +48,7 @@ public class ImmunizationPass {
 
         // make content
         buildComposition();
-        ImmunizationBuilder iB = new ImmunizationBuilder(totalImmunizationPass, this.patient);
+        ImmunizationBuilder iB = new ImmunizationBuilder(totalImmunizationPass, this.patient, this.doctorRoles, this.client);
     }
 
     /**
@@ -84,27 +84,27 @@ public class ImmunizationPass {
         /*
          *  Observation/Test: TINE test
          */
-        obs.add( newObservation(
-                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
-                        "10402-6", "Immune serum globulin given [Volume]")),
-                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-methods.html",
-                        "28163009", "Skin test for tuberculosis, Tine test")),
-                new DateTimeType("1999-09-25"),
-                this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
-                )
-        );
+//        obs.add( newObservation(
+//                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
+//                        "10402-6", "Immune serum globulin given [Volume]")),
+//                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-methods.html",
+//                        "28163009", "Skin test for tuberculosis, Tine test")),
+//                new DateTimeType("1999-09-25"),
+//                this.doctorRoles.get(new Random().nextInt(this.doctorRoles.size()))
+//                )
+//        );
 
         /*
          *  Observation/Test: Hepatitis B Schutzimpfung
          */
-        obs.add(newObservation(
-                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
-                        "10397-8", "Hepatitis B immune globulin given [Volume]")),
-                null,
-                new DateTimeType("2002-05-11"),
-                this.doctors_withQuali.get(new Random().nextInt(this.doctors_withQuali.size()))
-                )
-        );
+//        obs.add(newObservation(
+//                new CodeableConcept(new Coding("https://www.hl7.org/fhir/valueset-observation-codes.html",
+//                        "10397-8", "Hepatitis B immune globulin given [Volume]")),
+//                null,
+//                new DateTimeType("2002-05-11"),
+//                this.doctorRoles.get(new Random().nextInt(this.doctorRoles.size()))
+//                )
+//        );
 
 
         for( Observation ob : obs){

@@ -10,11 +10,11 @@ public class ImmunizationBuilder {
 
     Composition totalImmunizationPass;
     Patient patient;
-    List<PractitionerRole> doctor_roles;
+    ArrayList<PractitionerRole> doctor_roles;
     IGenericClient client;
 
     public ImmunizationBuilder(Composition totalImmunizationPass, Patient patient,
-                               List<PractitionerRole> doctor_roles,
+                               ArrayList<PractitionerRole> doctor_roles,
                                IGenericClient client) {
         this.totalImmunizationPass = totalImmunizationPass;
         this.patient = patient;
@@ -125,7 +125,7 @@ public class ImmunizationBuilder {
      *
      * @param conceptVaccineCode
      */
-    public Immunization newImmunization(CodeableConcept conceptVaccineCode, String occurrenceDate, Practitioner doctor) {
+    public Immunization newImmunization(CodeableConcept conceptVaccineCode, String occurrenceDate, PractitionerRole doctor) {
         Immunization exImmunization = new Immunization();
 
         //status is required
