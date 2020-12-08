@@ -38,8 +38,16 @@ public class ImmunizationBuilder {
         immuInfo.add(new ArrayList<String>() {{
             add("1991-01-01");
             add("http://hl7.org/fhir/sid/cvx");
+            add("184");
+            add("Yellow fever, unspecified formulation");
+            // chargen nummer
+            add("690010PD");
+            // target disease
+            add("http://hl7.org/fhir/sid/cvx");
             add("37");
             add("yellow fever");
+            // doseNumber
+            add("1");
         }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
@@ -50,7 +58,11 @@ public class ImmunizationBuilder {
             immu = newImmunization(
                     new CodeableConcept(new Coding(sublist.get(1), sublist.get(2), sublist.get(3))),
                     sublist.get(0),
-                    this.doctor_roles.get(new Random().nextInt(this.doctor_roles.size())));
+                    this.doctor_roles.get(new Random().nextInt(this.doctor_roles.size())),
+                    sublist.get(4),
+                    new CodeableConcept(new Coding(sublist.get(5), sublist.get(6), sublist.get(7))),
+                    sublist.get(8)
+            );
             methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
             immu.setId(methodOutcome.getId());
             tmp.addEntry(new Reference(immu));
@@ -64,57 +76,82 @@ public class ImmunizationBuilder {
      * This method will generate hard coded standart Immunizations by using the method "newImmunization()".
      * All content of the Immunizations is defined in here.
      */
-    public void buildStandartImmunizations() {
+    public void buildStandardImmunizations() {
         Immunization immu;
         MethodOutcome methodOutcome;
 
         ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
         immuInfo.add(new ArrayList<String>() {{
             add("1993-07-14");
-            add("http://hl7.org/fhir/sid/cvx");
-            add("18");
-            add("rabies, intramuscular injection");
-        }});
-        immuInfo.add(new ArrayList<String>() {{
-            add("1993-11-10");
+            // description of vaccine
             add("urn:oid:1.2.36.1.2001.1005.17");
-            add("GNFLU");
-            add("Influenza");
-        }});
-        immuInfo.add(new ArrayList<String>() {{
-            add("1993-08-10");
-            add("urn:oid:1.2.36.1.2001.1005.17");
-            add("GNMUM");
+            add("MMRSKB");
+            add("Priorix");
+            // chargen nummer
+            add("690010PD");
+            // target disease
+            add("http://snomed.info/sct");
+            add("36989005");
             add("Mumps");
-        }});
-        immuInfo.add(new ArrayList<String>() {{
-            add("1993-08-10");
-            add("urn:oid:1.2.36.1.2001.1005.17");
-            add("GNMEA");
-            add("Measles");
-        }});
-        immuInfo.add(new ArrayList<String>() {{
-            add("1992-03-01");
-            add("urn:oid:1.2.36.1.2001.1005.17");
-            add("GNTET");
-            add("Tetanus");
-        }});
-        immuInfo.add(new ArrayList<String>() {{
-            add("1992-05-25");
-            add("urn:oid:1.2.36.1.2001.1005.17");
-            add("GNRUB");
-            add("Rubella");
+            // doseNumber
+            add("1");
         }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
-        tmp.setTitle("Vaccination");
+        tmp.setTitle("Vaccinations");
 
 
         for (ArrayList<String> sublist : immuInfo) {
             immu = newImmunization(
                     new CodeableConcept(new Coding(sublist.get(1), sublist.get(2), sublist.get(3))),
                     sublist.get(0),
-                    this.doctor_roles.get(new Random().nextInt(this.doctor_roles.size())));
+                    this.doctor_roles.get(new Random().nextInt(this.doctor_roles.size())),
+                    sublist.get(4),
+                    new CodeableConcept(new Coding(sublist.get(5), sublist.get(6), sublist.get(7))),
+                    sublist.get(8)
+            );
+            methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
+            immu.setId(methodOutcome.getId());
+            tmp.addEntry(new Reference(immu));
+        }
+
+        this.totalImmunizationPass.addSection(tmp);
+    }
+
+    public void buildInfluenzaImmunizations(){
+        Immunization immu;
+        MethodOutcome methodOutcome;
+
+        ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
+        immuInfo.add(new ArrayList<String>() {{
+            add("1994-11-14");
+            // description of vaccine
+            add("urn:oid:1.2.36.1.2001.1005.17");
+            add("VAXGRP");
+            add("Vaxigrip");
+            // chargen nummer
+            add("6411-C");
+            // target disease
+            add("http://snomed.info/sct");
+            add("6142004");
+            add(" Influenza (disorder)");
+            // doseNumber
+            add("1");
+        }});
+
+        Composition.SectionComponent tmp = new Composition.SectionComponent();
+        tmp.setTitle("Influenza Vaccinations");
+
+
+        for (ArrayList<String> sublist : immuInfo) {
+            immu = newImmunization(
+                    new CodeableConcept(new Coding(sublist.get(1), sublist.get(2), sublist.get(3))),
+                    sublist.get(0),
+                    this.doctor_roles.get(new Random().nextInt(this.doctor_roles.size())),
+                    sublist.get(4),
+                    new CodeableConcept(new Coding(sublist.get(5), sublist.get(6), sublist.get(7))),
+                    sublist.get(8)
+            );
             methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
             immu.setId(methodOutcome.getId());
             tmp.addEntry(new Reference(immu));
@@ -128,7 +165,12 @@ public class ImmunizationBuilder {
      *
      * @param conceptVaccineCode
      */
-    public Immunization newImmunization(CodeableConcept conceptVaccineCode, String occurrenceDate, PractitionerRole doctor) {
+    public Immunization newImmunization(CodeableConcept conceptVaccineCode,
+                                        String occurrenceDate,
+                                        PractitionerRole doctor,
+                                        String lotNumber,
+                                        CodeableConcept targetDisease,
+                                        String doseNumber) {
         Immunization exImmunization = new Immunization();
 
         //status is required
@@ -145,6 +187,10 @@ public class ImmunizationBuilder {
 
         //perfomer/actor is required
         exImmunization.addPerformer().setActor(new Reference(doctor));
+
+        exImmunization.setLotNumber(lotNumber);
+        exImmunization.addProtocolApplied().addTargetDisease(targetDisease);
+        exImmunization.addProtocolApplied().setDoseNumber(new StringType(doseNumber));
 
 
         return exImmunization;
