@@ -3,7 +3,6 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r4.model.*;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class ImmunizationBuilder {
@@ -20,6 +19,10 @@ public class ImmunizationBuilder {
         this.patient = patient;
         this.doctor_roles = doctor_roles;
         this.client = client;
+    }
+
+    public void generateAllImmunzations(){
+        buildYellowFeverImmunization();
     }
 
 

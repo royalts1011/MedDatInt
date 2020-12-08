@@ -16,24 +16,23 @@ public class Main {
 
         // Make a new ImmunizationPass which has Patient, Immunizations,.....
         ImmunizationPass I = new ImmunizationPass(client, ctx);
-
         I.buildImmunizationPass();
 
-        // get the bundle to be able to generate visualisation
-        Bundle immuPass = I.getWholeImmunizationPass();
-        HTMLBuilder builder = new HTMLBuilder();
-        String genNarr = builder.enhancePass(immuPass);
-
-
-        // write HTML File to output directory
-        File file = new File("output/pass_visu.html");
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            fileWriter.write(genNarr);
-            fileWriter.flush();
-            fileWriter.close();
-        } catch (Exception e)   {
-            e.printStackTrace();
-        }
+//        // get the bundle to be able to generate visualisation
+//        Bundle immuPass = I.getWholeImmunizationPass();
+//        HTMLBuilder builder = new HTMLBuilder();
+//        String genNarr = builder.enhancePass(immuPass);
+//
+//        // write HTML File to output directory
+//
+//        File file = new File("output/pass_visu.html");
+//        try (FileWriter fileWriter = new FileWriter(file)) {
+//            fileWriter.write(genNarr);
+//            fileWriter.flush();
+//            fileWriter.close();
+//        } catch (Exception e)   {
+//            e.printStackTrace();
+//        }
 
     }
 
