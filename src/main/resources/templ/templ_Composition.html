@@ -13,6 +13,7 @@
         <h1><td th:text="${resource.title}"></td></h1>
         <h4>§16 Bundes-Seuchengesetzt</h4>
     </div>
+
     <!-- structure for person information -->
     <div>
         <table>
@@ -30,39 +31,88 @@
             </tr>
             <tr>
                 <td style="font-weight: bold;">Address</td>
-                <td><div th:text="${resource.section[0].entry[0].resource.address[0].postalCode + resource.section[0].entry[0].resource.address[0].city + ','}"></div>
+                <td><div th:text="${resource.section[0].entry[0].resource.address[0].postalCode + ' ' + resource.section[0].entry[0].resource.address[0].city + ','}"></div>
                     <div th:text="${resource.section[0].entry[0].resource.address[0].country}"></div>
                 </td>
             </tr>
         </table>
     </div>
+
     <!-- structure for yellow fever immunization -->
     <div style="margin-top: 100px">
         <h3><td th:text="${resource.section[1].title}"></td></h3>
         <table>
             <tr>
                 <td style="font-weight: bold;">Date</td>
-                <td style="font-weight: bold;">Signature and professinal status of vaccinator</td>
-                <td style="font-weight: bold;">Manufacturer and batch no. of vaccine</td>
+                <td style="font-weight: bold;">Signature and professional status of vaccinator</td>
+                <td style="font-weight: bold;">Vaccaine Name</td>
+                <td style="font-weight: bold;">Batch number</td>
                 <td style="font-weight: bold;">Official stamp of vaccinating centre</td>
             </tr>
+
         </table>
 
     </div>
-    <!-- structure for basic immunization -->
+    
+    <!-- structure for observation Tuberculin-test results-->
     <div style="margin-top: 50px">
-        <h3>Schutzimpfung gegen:</h3>
+        <h3>Tuberculin-test results</h3>
         <table>
             <tr>
-                <td style="font-weight: bold;">Name</td>
+                <td style="font-weight: bold;">Date</td> <!-- effective.date...-->
+                <td style="font-weight: bold;">Test</td> <!-- Observation method-->
+                <td style="font-weight: bold;">Reaction</td> <!-- value-->
+                <td style="font-weight: bold;">Signature and Stamp of physician</td> <!-- performer.role... -->
+            </tr>
+        </table>
+    </div>
+
+    <!-- structure for observation  Röteln -->
+    <div style="margin-top: 50px">
+        <h3>Rubella test result</h3>
+        <table>
+            <tr>
                 <td style="font-weight: bold;">Date</td>
-                <td style="font-weight: bold;">Manufacturer name of vaccine</td>
-                <td style="font-weight: bold;">Batch number</td>
+                <td style="font-weight: bold;">Method</td>
+                <td style="font-weight: bold;">Titers</td> <!-- Result -->
+                <td style="font-weight: bold;">Protection exits</td> <!-- Yes/No -->
                 <td style="font-weight: bold;">Signature and Stamp of physician</td>
             </tr>
         </table>
-
     </div>
+
+    <!-- structure for observation Hep B-->
+    <div style="margin-top: 50px">
+        <h3> Hep B: Results of antibody assays</h3>
+        <table>
+            <tr>
+                <td style="font-weight: bold;">Date</td>
+                <td style="font-weight: bold;">Test</td> <!-- method -->
+                <td style="font-weight: bold;">Result</td> <!-- value -->
+                <td style="font-weight: bold;">Signature and Stamp of physician</td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- structure for observation Hep A-->
+    <div style="margin-top: 50px">
+        <h3> Hep A:Results of antibody assays</h3>
+        <table>
+            <tr>
+                <td style="font-weight: bold;">Date</td>
+                <td style="font-weight: bold;">Test</td> <!-- method -->
+                <td style="font-weight: bold;">Result</td> <!-- value -->
+                <td style="font-weight: bold;">Signature and Stamp of physician</td>
+            </tr>
+        </table>
+    </div>
+
+
+
+
+
+
+
 </div>
 
 <!--/*-->
