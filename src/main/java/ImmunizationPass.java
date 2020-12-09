@@ -44,7 +44,7 @@ public class ImmunizationPass {
         initComposition();
         // Create first section concerning the patient this pass refers to
         this.totalImmunizationPass.addSection(new Composition.SectionComponent()
-                .setTitle("Name of the cardholder")
+                .setTitle("Issued to")
                 .addEntry(new Reference(this.patient)));
         /*
          * Initialize the Immunization and Observation (tests) builder
