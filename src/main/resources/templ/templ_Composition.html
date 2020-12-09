@@ -2,11 +2,11 @@
 <html xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <link rel="stylesheet" type="text/css" href="../templ/narrative.css"/>
-
 </head>
 
 <body>
 <!--*/-->
+
 <div>
     <!-- structure for title -->
     <div>
@@ -30,7 +30,7 @@
             </tr>
             <tr>
                 <td style="font-weight: bold;">Birth Date</td>
-                <td th:text="${resource.section[0].entry[0].resource.birthDate}"></td>
+                <td th:text="${resource.section[0].entry[0].resource.birthDate.myStringValue}"></td>
             </tr>
             <tr>
                 <td style="font-weight: bold;">Address</td>
@@ -40,8 +40,35 @@
             </tr>
         </table>
     </div>
-</div>
+    <!-- structure for yellow fever immunization -->
+    <div style="margin-top: 100px">
+        <h3><td th:text="${resource.section[1].title}"></td></h3>
+        <table>
+            <tr>
+                <td style="font-weight: bold;">Date</td>
+                <td style="font-weight: bold;">Signature and professinal status of vaccinator</td>
+                <td style="font-weight: bold;">Manufacturer and batch no. of vaccine</td>
+                <td style="font-weight: bold;">Official stamp of vaccinating centre</td>
+            </tr>
+        </table>
 
+    </div>
+    <!-- structure for basic immunization -->
+    <div style="margin-top: 50px">
+        <h3>Schutzimpfung gegen:</h3>
+        <table>
+            <tr>
+                <td style="font-weight: bold;">Name</td>
+                <td style="font-weight: bold;">Date</td>
+                <td style="font-weight: bold;">Manufacturer name of vaccine</td>
+                <td style="font-weight: bold;">Batch number</td>
+                <td style="font-weight: bold;">Signature and Stamp of physician</td>
+            </tr>
+        </table>
+
+    </div>
+
+</div>
 
 <!--/*-->
 </body>
