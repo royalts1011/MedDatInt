@@ -44,7 +44,7 @@ public class ImmunizationBuilder {
         exImmunization.setPatient(new Reference(this.patient));
 
         //occurence is required
-        exImmunization.setOccurrence(new DateType(occurrenceDate));
+        exImmunization.setOccurrence(new DateTimeType(occurrenceDate));
 
         //perfomer/actor is required
         exImmunization.addPerformer().setActor(new Reference(doctor));

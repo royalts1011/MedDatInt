@@ -38,22 +38,113 @@
         </table>
     </div>
 
-    <!-- structure for yellow fever immunization -->
-    <div style="margin-top: 100px">
+    <!-- structure for prophylaxis immunization -->
+    <div style="margin-top: 50px">
         <h3><td th:text="${resource.section[1].title}"></td></h3>
         <table>
             <tr>
-                <td style="font-weight: bold;">Date</td>
-                <td style="font-weight: bold;">Signature and professional status of vaccinator</td>
-                <td style="font-weight: bold;">Vaccaine Name</td>
-                <td style="font-weight: bold;">Batch number</td>
-                <td style="font-weight: bold;">Official stamp of vaccinating centre</td>
+                <th>Date</th>
+                <th>Vaccine or prophylaxis</th>
+                <th>Signature and professional status of supervising clinician</th>
+                <th>Manufacturer of Vaccine or prophylaxis</th>
+                <th>Batch no.</th>
+                <th>Certificate valid from/until</th>
+                <th>Official stamp of administering center:</th>
+            </tr>
+        </table>
+    </div>
+
+    <!-- structure for standard immunization -->
+    <div style="margin-top: 50px">
+        <h3><td th:text="${resource.section[2].title}"></td></h3>
+        <h5>tetanus, diphteria, pertussis, poliomyelitis, haemophilus influenzae b, measles, mumps,
+            rubella, varicella, chickenpox, meningococcal disease, pneumococcal disease, rotavirus, human papillomavirus (HPV), Hepatitis B </h5>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Vaccine name</th>
+                <th>Batch no.</th>
+                <th>Target disease</th>
+                <th>Signature and Stamp of physician</th>
+            </tr>
+
+            <tr th:each="e,state : ${resource.section[2].entry}">
+                <td th:text="${e.resource.occurrence}"></td>
+                <td th:text="${e.resource.vaccineCode.coding[0].display}"></td>
+                <td th:text="${e.resource.lotNumber}"></td>
+                <td>
+                    <div th:each="t : ${e.resource.protocolApplied[0].targetDisease}">
+                            <p th:text="${t.coding[0].display}"></p>
+                    </div>
+                </td>
+
+                <td><div th:text="${e.resource.performer[0].actor.resource.practitioner.resource.name[0].prefix[0] + ' '
+                                + e.resource.performer[0].actor.resource.practitioner.resource.name[0].given[0] + ' '
+                                + e.resource.performer[0].actor.resource.practitioner.resource.name[0].family }"></div>
+                    <div th:text="${e.resource.performer[0].actor.resource.organization.resource.address[0].line[0] + ' '
+                                + e.resource.performer[0].actor.resource.organization.resource.address[0].line[1]}"></div>
+                    <div th:text="${e.resource.performer[0].actor.resource.organization.resource.address[0].postalCode
+                                + e.resource.performer[0].actor.resource.organization.resource.address[0].city}"></div>
+                </td>
             </tr>
 
         </table>
-
     </div>
 
+    <!-- structure for immunization against Inlfuenza-->
+    <div style="margin-top: 50px">
+        <h3><td th:text="${resource.section[3].title}"></td></h3>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Vaccine name</th>
+                <th>Batch no.</th>
+                <th>Target disease</th>
+                <th>Signature and Stamp of physician</th>
+            </tr>
+            <tr th:each="e,state : ${resource.section[3].entry}">
+                <td th:text="${e.resource.occurrence}"></td>
+                <td th:text="${e.resource.vaccineCode.coding[0].display}"></td>
+                <td th:text="${e.resource.lotNumber}"></td>
+                <td th:text="${e.resource.protocolApplied[0].targetDisease[0].coding[0].display}"></td>
+                <td><div th:text="${e.resource.performer[0].actor.resource.practitioner.resource.name[0].prefix[0] + ' '
+                                + e.resource.performer[0].actor.resource.practitioner.resource.name[0].given[0] + ' '
+                                + e.resource.performer[0].actor.resource.practitioner.resource.name[0].family }"></div>
+                    <div th:text="${e.resource.performer[0].actor.resource.organization.resource.address[0].line[0] + ' '
+                                + e.resource.performer[0].actor.resource.organization.resource.address[0].line[1]}"></div>
+                    <div th:text="${e.resource.performer[0].actor.resource.organization.resource.address[0].postalCode
+                                + e.resource.performer[0].actor.resource.organization.resource.address[0].city}"></div></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- structure for immunization against Other-->
+    <div style="margin-top: 50px">
+        <h3><td th:text="${resource.section[4].title}"></td></h3>
+        <h5>e.g. against cholera, FSME, Hepatitis A, Hepatitis B, HPV, japanese encephalitis (JE), rabies, typhoid fever, shingles, Covid-19</h5>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Vaccine name</th>
+                <th>Batch no.</th>
+                <th>Target disease</th>
+                <th>Signature and Stamp of physician</th>
+            </tr>
+            <tr th:each="e,state : ${resource.section[4].entry}">
+                <td th:text="${e.resource.occurrence}"></td>
+                <td th:text="${e.resource.vaccineCode.coding[0].display}"></td>
+                <td th:text="${e.resource.lotNumber}"></td>
+                <td th:text="${e.resource.protocolApplied[0].targetDisease[0].coding[0].display}"></td>
+                <td><div th:text="${e.resource.performer[0].actor.resource.practitioner.resource.name[0].prefix[0] + ' '
+                                + e.resource.performer[0].actor.resource.practitioner.resource.name[0].given[0] + ' '
+                                + e.resource.performer[0].actor.resource.practitioner.resource.name[0].family }"></div>
+                    <div th:text="${e.resource.performer[0].actor.resource.organization.resource.address[0].line[0] + ' '
+                                + e.resource.performer[0].actor.resource.organization.resource.address[0].line[1]}"></div>
+                    <div th:text="${e.resource.performer[0].actor.resource.organization.resource.address[0].postalCode
+                                + e.resource.performer[0].actor.resource.organization.resource.address[0].city}"></div></td>
+            </tr>
+        </table>
+    </div>
 
     <!-- structure for observation Tuberculin-test results-->
     <div style="margin-top: 50px">
@@ -78,6 +169,22 @@
                                 + e.resource.performer[0].resource.organization.resource.address[0].city}"></div></td>
             </tr>
         </table>
+    </div>
+
+    <!-- structure for observation Rubella -->
+    <div style="margin-top: 50px">
+        <h3><td th:text="${resource.section[6].title}"></td></h3>
+
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Method</th>
+                <th>Titers</th>
+                <th>Protection exits</th>
+                <th>Signature and Stamp of physician</th>
+            </tr>
+        </table>
+
     </div>
 
     <!-- structure for observation Hep B-->
