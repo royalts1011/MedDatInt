@@ -21,9 +21,99 @@ public class ObservationBuilder {
     }
 
     /**
+     * This method creates a new Observation/Test by given parameters. Some tests, for example the tuberculosis skin test
+     * (tine-test) does not appear in the Observation.code ValueSet. Therefore an Observation.method must be chosen to
+     * fit the tine-test and thus the Observation.code a normal procedure, e.g. "Immune serum globulin given [Volume]"
+     * If the immune test can be portrayed by the Observation.code or another simple code, the Observation.method shall
+     * be set to null.
+     *
+     * @param conceptTestCode   The code describing the test or the type of treatment
+     * @param conceptMethodCode The code describing the method (e.g. tine-test),
+     *                          set to NULL if not needed
+     * @param dateOfTest        The date of the Observation/test
+     * @param doctor            The doctor leading the performance
+     * @return                  Returns the complete Observation/test
+     */
+    public Observation newObservation(CodeableConcept conceptTestCode, CodeableConcept conceptMethodCode,
+                                      DateTimeType dateOfTest, Practitioner doctor) {
+        Observation exObservation = new Observation();
+
+        // status required: FINAL = observation is complete
+        exObservation.setStatus(Observation.ObservationStatus.FINAL);
+
+        // set the performed direct test or treatment type
+        exObservation.setCode(conceptTestCode);
+
+        // Set method (titer skin) if not null
+        if (conceptMethodCode != null) exObservation.setMethod(conceptMethodCode);
+
+        // connect patient to test
+        exObservation.setSubject(new Reference(this.patient));
+
+        // when the test occurred
+        exObservation.setEffective(dateOfTest);
+
+        // who performed the test
+        exObservation.addPerformer(new Reference(doctor));
+
+        // what is the outcome
+//        exObservation.setValue(new BooleanType(true));
+
+        return exObservation;
+    }
+
+    public void buildSectionRubellaTest(){
+
+        /*
+         * TODO: Gather all Observation (test) info for the creation of the observation below
+         */
+
+        Composition.SectionComponent tmp = new Composition.SectionComponent();
+        // TODO a) before immunization, b) 10 weeks or more after immunization
+        tmp.setTitle("Rubella antibody assays");
+
+        /*
+         * TODO: Call Observation creation, put on server (ID retrieval) and add section entry
+         */
+
+        this.totalImmunizationPass.addSection(tmp);
+    }
+
+    public void buildSectionHepatitisB(){
+        /*
+         * TODO: Gather all Observation (test) info for the creation of the observation below
+         */
+
+        Composition.SectionComponent tmp = new Composition.SectionComponent();
+        tmp.setTitle("Hepatitis B: Result of antibody assays (Anti-Hbs)");
+
+        /*
+         * TODO: Call Observation creation, put on server (ID retrieval) and add section entry
+         */
+
+        this.totalImmunizationPass.addSection(tmp);
+    }
+
+    public void buildSectionTuberculinTest(){
+        /*
+         * TODO: Gather all Observation (test) info for the creation of the observation below
+         */
+
+        Composition.SectionComponent tmp = new Composition.SectionComponent();
+        tmp.setTitle("Tuberculin-test results");
+
+        /*
+         * TODO: Call Observation creation, put on server (ID retrieval) and add section entry
+         */
+
+        this.totalImmunizationPass.addSection(tmp);
+    }
+
+    /**
      * This method will generate hard coded Observations (here immune tests) by using the method "newObservation()".
      * All content of the immune tests is defined in here.
      */
+    @Deprecated
     public void buildObservations() {
 
         MethodOutcome methodOutcome;
@@ -65,47 +155,6 @@ public class ObservationBuilder {
 
     }
 
-    /**
-     * This method creates a new Observation/Test by given parameters. Some tests, for example the tuberculosis skin test
-     * (tine-test) does not appear in the Observation.code ValueSet. Therefore an Observation.method must be chosen to
-     * fit the tine-test and thus the Observation.code a normal procedure, e.g. "Immune serum globulin given [Volume]"
-     * If the immune test can be portrayed by the Observation.code or another simple code, the Observation.method shall
-     * be set to null.
-     *
-     * @param conceptTestCode   The code describing the test or the type of treatment
-     * @param conceptMethodCode The code describing the method (e.g. tine-test),
-     *                          set to NULL if not needed
-     * @param dateOfTest        The date of the Observation/test
-     * @param doctor            The doctor leading the performance
-     * @return                  Returns the complete Observation/test
-     */
-    public Observation newObservation(CodeableConcept conceptTestCode, CodeableConcept conceptMethodCode,
-                                      DateTimeType dateOfTest, Practitioner doctor) {
-        Observation exObservation = new Observation();
-
-        // status required: FINAL = observation is complete
-        exObservation.setStatus(Observation.ObservationStatus.FINAL);
-
-        // set the performed direct test or treatment type
-        exObservation.setCode(conceptTestCode);
-
-        // Set method (titer skin) if not null
-        if (conceptMethodCode != null) exObservation.setMethod(conceptMethodCode);
-
-        // connect patient to test
-        exObservation.setSubject(new Reference(this.patient));
-
-        // when the test occurred
-        exObservation.setEffective(dateOfTest);
-
-        // who performed the test
-        exObservation.addPerformer(new Reference(doctor));
-
-        // what is the outcome
-//        exObservation.setValue(new BooleanType(true));
-
-        return exObservation;
-    }
 
 
 }
