@@ -1,2 +1,0 @@
-immunization.resourceType=Immunization
-immunization.narrative=file:src/main/resources/templ/templ_Immunization.html
