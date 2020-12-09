@@ -53,7 +53,7 @@
         </table>
 
     </div>
-    
+
     <!-- structure for observation Tuberculin-test results-->
     <div style="margin-top: 50px">
         <h3>Tuberculin-test results</h3>
@@ -83,26 +83,50 @@
 
     <!-- structure for observation Hep B-->
     <div style="margin-top: 50px">
-        <h3> Hep B: Results of antibody assays</h3>
+        <h3><td th:text="${resource.section[7].title}"></td></h3>
         <table>
             <tr>
-                <td style="font-weight: bold;">Date</td>
-                <td style="font-weight: bold;">Test</td> <!-- method -->
-                <td style="font-weight: bold;">Result</td> <!-- value -->
-                <td style="font-weight: bold;">Signature and Stamp of physician</td>
+                <th>Date</th>
+                <th>Test</th>
+                <th>Result</th>
+                <th>Signature and Stamp of physician</th>
+            </tr>
+            <tr th:each="e,state : ${resource.section[7].entry}">
+                <td th:text="${e.resource.effective}"></td>
+                <td th:text="${e.resource.method.coding[0].display}"></td>
+                <td th:text="${e.resource.value}"></td>
+                <td><div th:text="${e.resource.performer[0].resource.practitioner.resource.name[0].prefix[0]
+                                + e.resource.performer[0].resource.practitioner.resource.name[0].given[0]
+                                + e.resource.performer[0].resource.practitioner.resource.name[0].family}"></div>
+                    <div th:text="${e.resource.performer[0].resource.organization.resource.address[0].line[0] + ' '
+                                + e.resource.performer[0].resource.organization.resource.address[0].line[1]}"></div>
+                    <div th:text="${e.resource.performer[0].resource.organization.resource.address[0].postalCode
+                                + e.resource.performer[0].resource.organization.resource.address[0].city}"></div></td>
             </tr>
         </table>
     </div>
 
     <!-- structure for observation Hep A-->
     <div style="margin-top: 50px">
-        <h3> Hep A:Results of antibody assays</h3>
+        <h3><td th:text="${resource.section[8].title}"></td></h3>
         <table>
             <tr>
-                <td style="font-weight: bold;">Date</td>
-                <td style="font-weight: bold;">Test</td> <!-- method -->
-                <td style="font-weight: bold;">Result</td> <!-- value -->
-                <td style="font-weight: bold;">Signature and Stamp of physician</td>
+                <th>Date</th>
+                <th>Test</th>
+                <th>Result</th>
+                <th>Signature and Stamp of physician</th>
+            </tr>
+            <tr th:each="e,state : ${resource.section[8].entry}">
+                <td th:text="${e.resource.effective}"></td>
+                <td th:text="${e.resource.method.coding[0].display}"></td>
+                <td th:text="${e.resource.value}"></td>
+                <td><div th:text="${e.resource.performer[0].resource.practitioner.resource.name[0].prefix[0]
+                                + e.resource.performer[0].resource.practitioner.resource.name[0].given[0]
+                                + e.resource.performer[0].resource.practitioner.resource.name[0].family }"></div>
+                    <div th:text="${e.resource.performer[0].resource.organization.resource.address[0].line[0] + ' '
+                                + e.resource.performer[0].resource.organization.resource.address[0].line[1]}"></div>
+                    <div th:text="${e.resource.performer[0].resource.organization.resource.address[0].postalCode
+                                + e.resource.performer[0].resource.organization.resource.address[0].city}"></div></td>
             </tr>
         </table>
     </div>
