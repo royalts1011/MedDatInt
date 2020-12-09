@@ -56,14 +56,20 @@ public class ImmunizationPass {
          * Add Immunization and test sections sequentially
          */
 
-        iB.buildSectionYellowFeverImmunization();
+        iB.buildSectionProphylaxis();
         iB.buildSectionStandardImmunizations();
         iB.buildSectionInfluenzaImmunizations();
+        iB.buildSectionOtherImmunizations();
 
         oB.buildSectionTuberculinTest();
         oB.buildSectionRubellaTest();
         oB.buildSectionHepatitisB();
         oB.buildSectionHepatitisA();
+
+        // TODO change to actual resource generation
+        this.totalImmunizationPass.addSection(new Composition.SectionComponent()
+                .setTitle("Passive immunizations with human (or heterologous) immunoglobulins"));
+
 
 
 
