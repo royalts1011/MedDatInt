@@ -37,7 +37,7 @@ public class ObservationBuilder {
      * @param doctorRole        The doctor (role) leading the performance
      * @return                  Returns the complete Observation/test
      */
-    public Observation newBasicObservation(DateType dateOfTest, CodeableConcept conceptTestCode,
+    public Observation newBasicObservation(String dateOfTest, CodeableConcept conceptTestCode,
                                       CodeableConcept conceptMethodCode, PractitionerRole doctorRole) {
         Observation exObservation = new Observation();
 
@@ -59,7 +59,7 @@ public class ObservationBuilder {
         exObservation.setSubject(new Reference(this.patient));
 
         // when the test occurred
-        exObservation.setEffective(dateOfTest);
+        exObservation.setEffective(new DateTimeType(dateOfTest));
 
         // who performed the test
         exObservation.addPerformer(new Reference(doctorRole));
@@ -92,7 +92,7 @@ public class ObservationBuilder {
 
         for (ArrayList<String> sublist : obInfo) {
             ob = newBasicObservation(
-                    new DateType(sublist.get(0)),
+                    sublist.get(0),
                     new CodeableConcept(new Coding(sublist.get(1),
                             sublist.get(2), sublist.get(3))),
                     new CodeableConcept(new Coding(sublist.get(4),
@@ -145,7 +145,7 @@ public class ObservationBuilder {
 
         for (ArrayList<String> sublist : obInfo) {
             ob = newBasicObservation(
-                    new DateType(sublist.get(0)),
+                    sublist.get(0),
                     new CodeableConcept(new Coding(sublist.get(1),
                             sublist.get(2), sublist.get(3))),
                     new CodeableConcept(new Coding(sublist.get(4),
