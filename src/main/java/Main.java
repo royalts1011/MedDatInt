@@ -15,7 +15,7 @@ public class Main {
 
         // Make a new ImmunizationPass which has Patient, Immunizations,.....
         ImmunizationPass I = new ImmunizationPass(client, ctx);
-        I.buildImmunizationPass();
+//        I.buildImmunizationPass();
 
         // get the bundle to be able to generate visualisation
         Composition immuPass = I.getTotalImmunizationPass();
@@ -33,6 +33,7 @@ public class Main {
         } catch (Exception e)   {
             e.printStackTrace();
         }
+
 
     }
 

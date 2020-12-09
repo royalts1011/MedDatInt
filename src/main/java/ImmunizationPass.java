@@ -38,12 +38,38 @@ public class ImmunizationPass {
         hB.buildHospital();
         doctorRoles = hB.getdoctorRoles();
 
-        // make content
-        buildComposition();
+        /*
+         * Initiate Composition
+         */
+        initComposition();
+        // Create first section concerning the patient this pass refers to
+        this.totalImmunizationPass.addSection(new Composition.SectionComponent()
+                .setTitle("Name of the cardholder")
+                .addEntry(new Reference(this.patient)));
+        /*
+         * Initialize the Immunization and Observation (tests) builder
+         */
         ImmunizationBuilder iB = new ImmunizationBuilder(totalImmunizationPass, this.patient, this.doctorRoles, this.client);
-        iB.buildYellowFeverImmunization();
-        //ObservationBuilder oB = new ObservationBuilder(totalImmunizationPass, this.patient, this.doctorRoles, this.client);
+        ObservationBuilder oB = new ObservationBuilder(totalImmunizationPass, this.patient, this.doctorRoles, this.client);
 
+        /*
+         * Add Immunization and test sections sequentially
+         */
+
+        iB.buildSectionYellowFeverImmunization();
+        iB.buildSectionStandardImmunizations();
+        iB.buildSectionInfluenzaImmunizations();
+
+        oB.buildSectionTuberculinTest();
+        oB.buildSectionRubellaTest();
+        oB.buildSectionHepatitisB();
+        oB.buildSectionHepatitisA();
+
+
+
+        /*
+         * POST to server and receive ID
+         */
         MethodOutcome compositionOutcome = client.create().resource(this.totalImmunizationPass).prettyPrint().encodedJson().execute();
         this.totalImmunizationPass.setId(compositionOutcome.getId());
     }
@@ -51,7 +77,7 @@ public class ImmunizationPass {
     /**
      * Thismethid will generate a Composition as our "International Certificates of Vaccination"
      */
-    public void buildComposition(){
+    public void initComposition(){
         this.totalImmunizationPass.setStatus(Composition.CompositionStatus.FINAL);
         this.totalImmunizationPass.setType(new CodeableConcept(new Coding("http://loinc.org", "11503-0",
                 "Medical records")));
@@ -61,14 +87,11 @@ public class ImmunizationPass {
        // totalImmunizationPass.addAuthor()
 
         this.totalImmunizationPass.setTitle("International Certificates of Vaccination");
-        this.totalImmunizationPass.addSection(new Composition.SectionComponent()
-                .setTitle("Name of the cardholder")
-                .addEntry(new Reference(this.patient)));
     }
 
     /**
-     * This method creates a new Patient with(Name,Birth,MaritalStatus) and returns it.
-     * @return
+     * This method creates a new Patient with(Name,Birth,MaritalStatus,Gender) and returns it.
+     * @return Patient, the hard-coded patient.
      */
     public Patient newPatient(){
         // Empty Patient Instance
@@ -83,6 +106,7 @@ public class ImmunizationPass {
 
         exName.setUse(HumanName.NameUse.OFFICIAL).addGiven(firstName).setFamily(lastName);
         exPatient.addName(exName);
+        exPatient.setGender(Enumerations.AdministrativeGender.MALE);
 
         // Birthday
         Calendar cal = Calendar.getInstance();
@@ -126,7 +150,10 @@ public class ImmunizationPass {
     /**
      * This method can be called if the list of doctors shall only be this one doctor.
      * E.g. the server got cleaned and no doctors would be found.
+     *
+     * @return Returns a list containing only one doctor.
      */
+    @Deprecated
     private List<Practitioner> setRescueDoc(){
         Practitioner doc = new Practitioner();
         HumanName doctorsName = new HumanName();

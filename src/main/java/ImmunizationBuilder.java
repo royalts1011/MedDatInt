@@ -21,16 +21,47 @@ public class ImmunizationBuilder {
         this.client = client;
     }
 
-    public void generateAllImmunzations(){
-        buildYellowFeverImmunization();
-    }
+    /**
+     * creates a new Immunization by given parameters.
+     *
+     * @param conceptVaccineCode
+     */
+    public Immunization newImmunization(CodeableConcept conceptVaccineCode,
+                                        String occurrenceDate,
+                                        PractitionerRole doctor,
+                                        String lotNumber,
+                                        CodeableConcept targetDisease,
+                                        String doseNumber) {
+        Immunization exImmunization = new Immunization();
 
+        //status is required
+        exImmunization.setStatus(Immunization.ImmunizationStatus.COMPLETED);
+
+        //vaccineCode is required
+        exImmunization.setVaccineCode(conceptVaccineCode);
+
+        //patient is required
+        exImmunization.setPatient(new Reference(this.patient));
+
+        //occurence is required
+        exImmunization.setOccurrence(new DateTimeType(occurrenceDate));
+
+        //perfomer/actor is required
+        exImmunization.addPerformer().setActor(new Reference(doctor));
+
+        exImmunization.setLotNumber(lotNumber);
+        exImmunization.addProtocolApplied().addTargetDisease(targetDisease);
+        exImmunization.addProtocolApplied().setDoseNumber(new StringType(doseNumber));
+
+
+        return exImmunization;
+    }
 
     /**
      * This method will generate hard coded Yellow Fever Immunizations by using the method "newImmunization()".
      * All content of the Immunizations is defined in here.
      */
-    public void buildYellowFeverImmunization() {
+    public void buildSectionYellowFeverImmunization() {
         Immunization immu;
         MethodOutcome methodOutcome;
 
@@ -71,12 +102,11 @@ public class ImmunizationBuilder {
         this.totalImmunizationPass.addSection(tmp);
     }
 
-
     /**
-     * This method will generate hard coded standart Immunizations by using the method "newImmunization()".
+     * This method will generate hard coded standard Immunizations by using the method "newImmunization()".
      * All content of the Immunizations is defined in here.
      */
-    public void buildStandardImmunizations() {
+    public void buildSectionStandardImmunizations() {
         Immunization immu;
         MethodOutcome methodOutcome;
 
@@ -98,7 +128,7 @@ public class ImmunizationBuilder {
         }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
-        tmp.setTitle("Vaccinations");
+        tmp.setTitle("Standard Vaccinations");
 
 
         for (ArrayList<String> sublist : immuInfo) {
@@ -118,7 +148,7 @@ public class ImmunizationBuilder {
         this.totalImmunizationPass.addSection(tmp);
     }
 
-    public void buildInfluenzaImmunizations(){
+    public void buildSectionInfluenzaImmunizations(){
         Immunization immu;
         MethodOutcome methodOutcome;
 
@@ -160,40 +190,5 @@ public class ImmunizationBuilder {
         this.totalImmunizationPass.addSection(tmp);
     }
 
-    /**
-     * creates a new Immunization by given parameters.
-     *
-     * @param conceptVaccineCode
-     */
-    public Immunization newImmunization(CodeableConcept conceptVaccineCode,
-                                        String occurrenceDate,
-                                        PractitionerRole doctor,
-                                        String lotNumber,
-                                        CodeableConcept targetDisease,
-                                        String doseNumber) {
-        Immunization exImmunization = new Immunization();
-
-        //status is required
-        exImmunization.setStatus(Immunization.ImmunizationStatus.COMPLETED);
-
-        //vaccineCode is required
-        exImmunization.setVaccineCode(conceptVaccineCode);
-
-        //patient is required
-        exImmunization.setPatient(new Reference(this.patient));
-
-        //occurence is required
-        exImmunization.setOccurrence(new DateTimeType(occurrenceDate));
-
-        //perfomer/actor is required
-        exImmunization.addPerformer().setActor(new Reference(doctor));
-
-        exImmunization.setLotNumber(lotNumber);
-        exImmunization.addProtocolApplied().addTargetDisease(targetDisease);
-        exImmunization.addProtocolApplied().setDoseNumber(new StringType(doseNumber));
-
-
-        return exImmunization;
-    }
 }
 
