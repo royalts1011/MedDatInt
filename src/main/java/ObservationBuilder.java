@@ -99,7 +99,7 @@ public class ObservationBuilder {
                             sublist.get(5), sublist.get(6))),
                     this.doctorRoles.get(new Random().nextInt(this.doctorRoles.size()))
             );
-            ob.setValue(new StringType("Diameter below alarming threshold"));
+            ob.setValue(new StringType("negative"));
             ob.addInterpretation(new CodeableConcept(new Coding(
                     "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
                     "L",

@@ -58,7 +58,6 @@ public class ImmunizationPass {
 
         iB.buildSectionYellowFeverImmunization();
         iB.buildSectionStandardImmunizations();
-
         iB.buildSectionInfluenzaImmunizations();
 
         oB.buildSectionTuberculinTest();
