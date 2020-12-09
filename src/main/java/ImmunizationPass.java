@@ -61,6 +61,7 @@ public class ImmunizationPass {
         iB.buildSectionInfluenzaImmunizations();
         iB.buildSectionOtherImmunizations();
 
+
         oB.buildSectionTuberculinTest();
         oB.buildSectionRubellaTest();
         oB.buildSectionHepatitisB();
@@ -70,7 +71,7 @@ public class ImmunizationPass {
         this.totalImmunizationPass.addSection(new Composition.SectionComponent()
                 .setTitle("Passive immunizations with human (or heterologous) immunoglobulins"));
 
-
+        iB.buildCorona();
 
 
         /*
