@@ -40,10 +40,8 @@ public class HospitalBuilder {
                 .setPostalCode("20251");
 
         // Adding structured street and number information
-        hospAddress.setLine(new ArrayList<StringType>() {{
-            add(new StringType("Martinistraße"));
-            add(new StringType("52"));
-        }});
+        hospAddress.addLine("Martinistraße").addLine("52");
+
         // alternate Textform of the address that could be used if wanted.
         hospAddress.setText( "Martinistraße 52, " +
                 "20251 Hamburg, " +

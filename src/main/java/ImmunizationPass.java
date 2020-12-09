@@ -44,7 +44,7 @@ public class ImmunizationPass {
         initComposition();
         // Create first section concerning the patient this pass refers to
         this.totalImmunizationPass.addSection(new Composition.SectionComponent()
-                .setTitle("Name of the cardholder")
+                .setTitle("Issued to")
                 .addEntry(new Reference(this.patient)));
         /*
          * Initialize the Immunization and Observation (tests) builder
@@ -56,15 +56,23 @@ public class ImmunizationPass {
          * Add Immunization and test sections sequentially
          */
 
-        iB.buildSectionYellowFeverImmunization();
+        iB.buildSectionProphylaxis();
         iB.buildSectionStandardImmunizations();
-
-        oB.buildSectionRubellaTest();
-        oB.buildSectionHepatitisB();
-
         iB.buildSectionInfluenzaImmunizations();
+        iB.buildSectionOtherImmunizations();
+
 
         oB.buildSectionTuberculinTest();
+        oB.buildSectionRubellaTest();
+        oB.buildSectionHepatitisB();
+        oB.buildSectionHepatitisA();
+
+        // TODO change to actual resource generation
+        this.totalImmunizationPass.addSection(new Composition.SectionComponent()
+                .setTitle("Passive immunizations with human (or heterologous) immunoglobulins"));
+
+        iB.buildCorona();
+
 
         /*
          * POST to server and receive ID
