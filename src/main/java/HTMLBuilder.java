@@ -30,11 +30,30 @@ public class HTMLBuilder {
         return this.narrativeCtx.newXmlParser().setPrettyPrint(true).encodeResourceToString(immuPass);
     }
 
+    /**
+     * removes day and time from the time stamps
+     * @param generated
+     * @return
+     */
+    private String enhanceDate(String generated)    {
+        generated = generated.replaceAll("\\d\\d:\\d\\d:\\d\\d CET", "");
+        generated = generated.replaceAll("\\d\\d:\\d\\d:\\d\\d CEST", "");
+        String daypattern = "Mon|Tue|Wed|Thu|Fri|Sat|Sun";
+        generated = generated.replaceAll(daypattern, "");
+        return generated;
+    }
 
+    /**
+     *
+     * @param immunizationPass
+     * @return
+     */
     public String fullHTML(Composition immunizationPass) {
 
         // Generate the basic Content
         String genContent = generateBasicsFromCompositin(immunizationPass);
+
+        genContent = enhanceDate(genContent);
 
 
         // Load Header

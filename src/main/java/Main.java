@@ -1,7 +1,6 @@
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r4.model.Composition;
-
 import java.io.File;
 import java.io.FileWriter;
 
@@ -36,7 +35,5 @@ public class Main {
         }
 
     }
-
-
 
 }
