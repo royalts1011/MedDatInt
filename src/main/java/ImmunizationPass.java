@@ -59,12 +59,14 @@ public class ImmunizationPass {
         iB.buildSectionYellowFeverImmunization();
         iB.buildSectionStandardImmunizations();
 
-        oB.buildSectionRubellaTest();
-        oB.buildSectionHepatitisB();
-
         iB.buildSectionInfluenzaImmunizations();
 
         oB.buildSectionTuberculinTest();
+        oB.buildSectionRubellaTest();
+        oB.buildSectionHepatitisB();
+        oB.buildSectionHepatitisA();
+
+
 
         /*
          * POST to server and receive ID
