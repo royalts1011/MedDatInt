@@ -1,6 +1,5 @@
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Composition;
 
 import java.io.File;
@@ -22,7 +21,8 @@ public class Main {
         // get the bundle to be able to generate visualisation
         Composition immuPass = I.getTotalImmunizationPass();
         HTMLBuilder builder = new HTMLBuilder();
-        String genNarr = builder.enhancePass(immuPass);
+        String genNarr = builder.fullHTML(immuPass);
+
 
         // write HTML File to output directory
 
