@@ -170,9 +170,8 @@ public class ObservationBuilder {
     }
 
     public void buildSectionHepatitisA(){
-
         Composition.SectionComponent tmp = new Composition.SectionComponent();
-        tmp.setTitle("Hepatitis B: Result of antibody assays (Anti-Hbs)");
+        tmp.setTitle("Hepatitis A: Result of antibody assays (Anti-Hbs)");
         this.totalImmunizationPass.addSection(tmp);
     }
 

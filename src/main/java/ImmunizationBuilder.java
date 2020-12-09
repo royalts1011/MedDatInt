@@ -61,7 +61,7 @@ public class ImmunizationBuilder {
      * This method will generate hard coded Yellow Fever Immunizations by using the method "newImmunization()".
      * All content of the Immunizations is defined in here.
      */
-    public void buildSectionYellowFeverImmunization() {
+    public void buildSectionProphylaxis() {
         Immunization immu;
         MethodOutcome methodOutcome;
 
@@ -82,7 +82,7 @@ public class ImmunizationBuilder {
         }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
-        tmp.setTitle("International certificate of vaccination or revaccination against Yellow Fever");
+        tmp.setTitle("International certificate of vaccination or prophylaxis");
 
 
         for (ArrayList<String> sublist : immuInfo) {
@@ -128,7 +128,7 @@ public class ImmunizationBuilder {
         }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
-        tmp.setTitle("Standard Vaccinations");
+        tmp.setTitle("Vaccinations");
 
 
         for (ArrayList<String> sublist : immuInfo) {
@@ -170,7 +170,7 @@ public class ImmunizationBuilder {
         }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
-        tmp.setTitle("Influenza Vaccinations");
+        tmp.setTitle("Other vaccinations against influenza");
 
 
         for (ArrayList<String> sublist : immuInfo) {
@@ -190,5 +190,11 @@ public class ImmunizationBuilder {
         this.totalImmunizationPass.addSection(tmp);
     }
 
+    public void buildSectionOtherImmunizations(){
+        Composition.SectionComponent tmp = new Composition.SectionComponent();
+        tmp.setTitle("Other vaccinations");
+//        tmp.setTitle("Infection and travel vaccinations, professionally necessary vaccinations");
+        this.totalImmunizationPass.addSection(tmp);
+    }
 }
 
