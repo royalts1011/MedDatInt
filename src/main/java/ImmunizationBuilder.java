@@ -50,8 +50,7 @@ public class ImmunizationBuilder {
         exImmunization.addPerformer().setActor(new Reference(doctor));
 
         exImmunization.setLotNumber(lotNumber);
-        exImmunization.addProtocolApplied().addTargetDisease(targetDisease);
-        exImmunization.addProtocolApplied().setDoseNumber(new StringType(doseNumber));
+        exImmunization.addProtocolApplied().addTargetDisease(targetDisease).setDoseNumber(new StringType(doseNumber));
 
 
         return exImmunization;
@@ -245,6 +244,10 @@ public class ImmunizationBuilder {
         this.totalImmunizationPass.addSection(tmp);
     }
 
+    /**
+     * This method will generate hard coded inlfuenza Immunizations by using the method "newImmunization()".
+     * All content of the Immunizations is defined in here.
+     */
     public void buildSectionInfluenzaImmunizations(){
         Immunization immu;
         MethodOutcome methodOutcome;
@@ -369,6 +372,47 @@ public class ImmunizationBuilder {
             immu.setId(methodOutcome.getId());
             tmp.addEntry(new Reference(immu));
         }
+        this.totalImmunizationPass.addSection(tmp);
+    }
+
+    public void buildCorona() {
+        Immunization immu;
+        MethodOutcome methodOutcome;
+
+        ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
+        immuInfo.add(new ArrayList<String>() {{
+            add("2020-12-24");
+            add("http://hl7.org/fhir/sid/cvx");
+            add("840534001");
+            add("Severe acute respiratory syndrome coronavirus 2 vaccination (procedure)");
+            // chargen nummer
+            add("2020LOVE");
+            // target disease
+            add("http://hl7.org/fhir/sid/cvx");
+            add("186747009");
+            add("Coronavirus infection (disorder)");
+            // doseNumber
+            add("1");
+        }});
+
+        Composition.SectionComponent tmp = new Composition.SectionComponent();
+        tmp.setTitle("Vaccination against COVID-19");
+
+
+        for (ArrayList<String> sublist : immuInfo) {
+            immu = newImmunization(
+                    sublist.get(0),
+                    new CodeableConcept(new Coding(sublist.get(1), sublist.get(2), sublist.get(3))),
+                    this.doctor_roles.get(new Random().nextInt(this.doctor_roles.size())),
+                    sublist.get(4),
+                    new CodeableConcept(new Coding(sublist.get(5), sublist.get(6), sublist.get(7))),
+                    sublist.get(8)
+            );
+            methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
+            immu.setId(methodOutcome.getId());
+            tmp.addEntry(new Reference(immu));
+        }
+
         this.totalImmunizationPass.addSection(tmp);
     }
 }
