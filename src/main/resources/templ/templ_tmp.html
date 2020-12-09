@@ -102,3 +102,43 @@
         </tr>
     </table>
 </div>
+
+
+
+
+<!-- structure for observation  Röteln -->
+<div style="margin-top: 50px">
+    <h3><td th:text="${resource.section[6].title}"></td></h3>
+    <table>
+        <tr>
+            <td style="font-weight: bold;">Date</td>
+            <td style="font-weight: bold;">Method</td>
+            <td style="font-weight: bold;">Titers</td> <!-- Result -->
+            <td style="font-weight: bold;">Protection exits</td> <!-- Yes/No -->
+            <td style="font-weight: bold;">Signature and Stamp of physician</td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Method</th>
+            <th>Titers</th>
+            <th>Protection exits</th>
+            <th>Signature and Stamp of physician</th>
+        </tr>
+        <tr th:each="e,state : ${resource.section[6].entry}">
+            <td th:text="${e.resource.effective}"></td>
+            <td th:text="${e.resource.method.coding[0].display}"></td>
+            <td th:text="${e.resource.value}"></td>
+            <td><div th:text="${e.resource.performer[0].resource.practitioner.resource.name[0].prefix[0]
+                                + e.resource.performer[0].resource.practitioner.resource.name[0].given[0]
+                                + e.resource.performer[0].resource.practitioner.resource.name[0].family }"></div>
+                <div th:text="${e.resource.performer[0].resource.organization.resource.address[0].line[0] + ' '
+                                + e.resource.performer[0].resource.organization.resource.address[0].line[1]}"></div>
+                <div th:text="${e.resource.performer[0].resource.organization.resource.address[0].postalCode
+                                + e.resource.performer[0].resource.organization.resource.address[0].city}"></div></td>
+        </tr>
+    </table>
+
+</div>
