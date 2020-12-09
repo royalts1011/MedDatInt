@@ -44,7 +44,7 @@ public class ImmunizationBuilder {
         exImmunization.setPatient(new Reference(this.patient));
 
         //occurence is required
-        exImmunization.setOccurrence(new DateTimeType(occurrenceDate));
+        exImmunization.setOccurrence(new DateType(occurrenceDate));
 
         //perfomer/actor is required
         exImmunization.addPerformer().setActor(new Reference(doctor));
@@ -288,9 +288,87 @@ public class ImmunizationBuilder {
     }
 
     public void buildSectionOtherImmunizations(){
+        Immunization immu;
+        MethodOutcome methodOutcome;
+
+        ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
+        immuInfo.add(new ArrayList<String>() {{
+                add("2009-06-29");
+                // description of vaccine
+                add("urn:oid:1.2.36.1.2001.1005.17");
+                add("MMRSKB");
+                add("Priorix");
+                // chargen nummer
+                add("AHABB270BG");
+                // target disease
+                add("http://snomed.info/sct");
+                add("709410003");
+                add("Haemophilus influenzae type b infection");
+                // doseNumber
+                add("1");
+            }});
+        immuInfo.add(new ArrayList<String>() {{
+                add("2009-06-30");
+                // description of vaccine
+                add("http://hl7.org/fhir/sid/cvx");
+                add("26");
+                add("cholera, unspecified formulation");
+                // chargen nummer
+                add("KO1331B1");
+                // target disease
+                add("http://snomed.info/sct");
+                add("63650001");
+                add("Cholera (disorder)");
+                // doseNumber
+                add("1");
+            }});
+        immuInfo.add(new ArrayList<String>() {{
+            add("2010-06-01");
+            // description of vaccine
+            add("http://hl7.org/fhir/sid/cvx");
+            add("18");
+            add("rabies, intramuscular injection");
+            // chargen nummer
+            add("J1128-13");
+            // target disease
+            add("http://snomed.info/sct");
+            add("14168008");
+            add("Rabies (disorder)");
+            // doseNumber
+            add("1");
+        }});
+        immuInfo.add(new ArrayList<String>() {{
+            add("2010-07-05");
+            // description of vaccine
+            add("http://hl7.org/fhir/sid/cvx");
+            add("18");
+            add("rabies, intramuscular injection");
+            // chargen nummer
+            add("J1128-13");
+            // target disease
+            add("http://snomed.info/sct");
+            add("14168008");
+            add("Rabies (disorder)");
+            // doseNumber
+            add("1");
+        }});
+
         Composition.SectionComponent tmp = new Composition.SectionComponent();
         tmp.setTitle("Other vaccinations");
 //        tmp.setTitle("Infection and travel vaccinations, professionally necessary vaccinations");
+        for (ArrayList<String> sublist : immuInfo) {
+            immu = newImmunization(
+                    sublist.get(0),
+                    new CodeableConcept(new Coding(sublist.get(1), sublist.get(2), sublist.get(3))),
+                    this.doctor_roles.get(new Random().nextInt(this.doctor_roles.size())),
+                    sublist.get(4),
+                    new CodeableConcept(new Coding(sublist.get(5), sublist.get(6), sublist.get(7))),
+                    sublist.get(8)
+            );
+            methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
+            immu.setId(methodOutcome.getId());
+            tmp.addEntry(new Reference(immu));
+        }
         this.totalImmunizationPass.addSection(tmp);
     }
 }
