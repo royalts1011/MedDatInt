@@ -69,7 +69,7 @@
             </tr>
 
             <tr th:each="e,state : ${resource.section[2].entry}">
-                <td th:text="${e.resource.occurrence}"></td>
+                <td th:text="${e.resource.occurrence.value}"></td>
                 <td th:text="${e.resource.vaccineCode.coding[0].display}"></td>
                 <td th:text="${e.resource.lotNumber}"></td>
                 <td>
@@ -103,7 +103,7 @@
                 <th>Signature and Stamp of physician</th>
             </tr>
             <tr th:each="e,state : ${resource.section[3].entry}">
-                <td th:text="${e.resource.occurrence}"></td>
+                <td th:text="${e.resource.occurrence.value}"></td>
                 <td th:text="${e.resource.vaccineCode.coding[0].display}"></td>
                 <td th:text="${e.resource.lotNumber}"></td>
                 <td th:text="${e.resource.protocolApplied[0].targetDisease[0].coding[0].display}"></td>
@@ -121,7 +121,7 @@
     <!-- structure for immunization against Other-->
     <div style="margin-top: 50px">
         <h3><td th:text="${resource.section[4].title}"></td></h3>
-        <h5>e.g. against cholera, FSME, Hepatitis A, Hepatitis B, HPV, japanese encephalitis (JE), rabies, typhoid fever, shingles, Covid-19</h5>
+        <h5>e.g. against cholera, FSME, Hepatitis A, Hepatitis B, HPV, japanese encephalitis (JE), rabies, typhoid fever, shingles</h5>
         <table>
             <tr>
                 <th>Date</th>
@@ -131,7 +131,7 @@
                 <th>Signature and Stamp of physician</th>
             </tr>
             <tr th:each="e,state : ${resource.section[4].entry}">
-                <td th:text="${e.resource.occurrence}"></td>
+                <td th:text="${e.resource.occurrence.value}"></td>
                 <td th:text="${e.resource.vaccineCode.coding[0].display}"></td>
                 <td th:text="${e.resource.lotNumber}"></td>
                 <td th:text="${e.resource.protocolApplied[0].targetDisease[0].coding[0].display}"></td>
@@ -157,7 +157,7 @@
                 <th>Signature and Stamp of physician</th>
             </tr>
             <tr th:each="e,state : ${resource.section[5].entry}">
-                <td th:text="${e.resource.effective}"></td>
+                <td th:text="${e.resource.effective.value}"></td>
                 <td th:text="${e.resource.method.coding[0].display}"></td>
                 <td th:text="${e.resource.value}"></td>
                 <td><div th:text="${e.resource.performer[0].resource.practitioner.resource.name[0].prefix[0] + ' '
@@ -198,7 +198,7 @@
                 <th>Signature and Stamp of physician</th>
             </tr>
             <tr th:each="e,state : ${resource.section[7].entry}">
-                <td th:text="${e.resource.effective}"></td>
+                <td th:text="${e.resource.effective.value}"></td>
                 <td th:text="${e.resource.method.coding[0].display}"></td>
                 <td th:text="${e.resource.value}"></td>
                 <td><div th:text="${e.resource.performer[0].resource.practitioner.resource.name[0].prefix[0] + ' '
@@ -223,7 +223,7 @@
                 <th>Signature and Stamp of physician</th>
             </tr>
             <tr th:each="e,state : ${resource.section[8].entry}">
-                <td th:text="${e.resource.effective}"></td>
+                <td th:text="${e.resource.effective.value}"></td>
                 <td th:text="${e.resource.method.coding[0].display}"></td>
                 <td th:text="${e.resource.value}"></td>
                 <td><div th:text="${e.resource.performer[0].resource.practitioner.resource.name[0].prefix[0] + ' '
@@ -236,6 +236,49 @@
             </tr>
         </table>
     </div>
+
+
+    <!-- structure for passiv immunization-->
+    <div style="margin-top: 50px">
+        <h3><td th:text="${resource.section[9].title}"></td></h3>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Vaccine name</th>
+                <th>Batch no.</th>
+                <th>Target disease</th>
+                <th>Signature and Stamp of physician</th>
+            </tr>
+        </table>
+    </div>
+
+    <!-- structure for immunization against Covid-19-->
+    <div style="margin-top: 50px">
+        <h3><td th:text="${resource.section[10].title}"></td></h3>
+        <table>
+            <tr>
+                <th>Date</th>
+                <th>Vaccine name</th>
+                <th>Batch no.</th>
+                <th>Target disease</th>
+                <th>Signature and Stamp of physician</th>
+            </tr>
+            <tr th:each="e,state : ${resource.section[10].entry}">
+                <td th:text="${e.resource.occurrence.value}"></td>
+                <td th:text="${e.resource.vaccineCode.coding[0].display}"></td>
+                <td th:text="${e.resource.lotNumber}"></td>
+                <td th:text="${e.resource.protocolApplied[0].targetDisease[0].coding[0].display}"></td>
+                <td><div th:text="${e.resource.performer[0].actor.resource.practitioner.resource.name[0].prefix[0] + ' '
+                                + e.resource.performer[0].actor.resource.practitioner.resource.name[0].given[0] + ' '
+                                + e.resource.performer[0].actor.resource.practitioner.resource.name[0].family }"></div>
+                    <div th:text="${e.resource.performer[0].actor.resource.organization.resource.address[0].line[0] + ' '
+                                + e.resource.performer[0].actor.resource.organization.resource.address[0].line[1]}"></div>
+                    <div th:text="${e.resource.performer[0].actor.resource.organization.resource.address[0].postalCode
+                                + e.resource.performer[0].actor.resource.organization.resource.address[0].city}"></div></td>
+            </tr>
+        </table>
+    </div>
+
 
 
 
