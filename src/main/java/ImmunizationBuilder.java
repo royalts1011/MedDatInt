@@ -263,17 +263,17 @@ public class ImmunizationBuilder {
         immuInfo.add(new ArrayList<String>() {{
                 add("2009-06-29");
                 // description of vaccine
-                add("urn:oid:1.2.36.1.2001.1005.17");
-                add("MMRSKB");
-                add("Priorix");
+                add("http://hl7.org/fhir/sid/cvx");
+                add("190");
+                add("Typhoid conjugate vaccine (TCV)");
                 // chargen nummer
                 add("AHABB270BG");
                 // doseNumber
                 add("1");
                 // target disease
                 add("http://snomed.info/sct");
-                add("709410003");
-                add("Haemophilus influenzae type b infection");
+                add("4834000");
+                add("Typhoid fever");
             }});
         immuInfo.add(new ArrayList<String>() {{
                 add("2009-06-30");
