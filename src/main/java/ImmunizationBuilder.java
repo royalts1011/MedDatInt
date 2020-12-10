@@ -352,32 +352,6 @@ public class ImmunizationBuilder {
         addNewImmunizationsToSection(immuInfo, tmp);
     }
 
-    public void buildSectionPassiveImmunizations(){
-        ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
-        immuInfo.add(new ArrayList<String>() {{
-            add("1994-11-14");
-            // description of vaccine
-            add("urn:oid:1.2.36.1.2001.1005.17");
-            add("VAXGRP");
-            add("Vaxigrip");
-            // chargen nummer
-            add("6411-C");
-            // doseNumber
-            add("1");
-            // target disease
-            add("http://snomed.info/sct");
-            add("6142004");
-            add("Influenza (disorder)");
-        }});
-
-        Composition.SectionComponent tmp = new Composition.SectionComponent();
-        tmp.setTitle("Other vaccinations against influenza");
-        /*
-         * Create all immunizations from info, add entries and add section component
-         */
-        addNewImmunizationsToSection(immuInfo, tmp);
-    }
-
     public void buildCorona() {
         ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
         immuInfo.add(new ArrayList<String>() {{
