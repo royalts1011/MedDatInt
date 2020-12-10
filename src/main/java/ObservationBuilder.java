@@ -114,8 +114,6 @@ public class ObservationBuilder {
     }
 
     public void buildSectionRubellaTest(){
-
-
         Observation ob;
         MethodOutcome methodOutcome;
 

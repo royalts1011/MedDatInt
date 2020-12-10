@@ -96,23 +96,22 @@ public class ImmunizationBuilder {
 
         ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
         immuInfo.add(new ArrayList<String>() {{
-            add("1991-01-01");
+            add("2009-03-13");
             add("http://hl7.org/fhir/sid/cvx");
             add("184");
             add("Yellow fever, unspecified formulation");
             // chargen nummer
-            add("690010PD");
+            add("FFY010PD");
             // doseNumber
             add("1");
             // target disease
-            add("http://hl7.org/fhir/sid/cvx");
-            add("37");
+            add("http://snomed.info/sct");
+            add("16541001");
             add("yellow fever");
         }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
         tmp.setTitle("International certificate of vaccination or prophylaxis");
-
 
         List<CodeableConcept> targetDiseases;
         for (ArrayList<String> sublist : immuInfo) {
@@ -128,6 +127,7 @@ public class ImmunizationBuilder {
                     sublist.get(5),
                     targetDiseases
             );
+            immu.setManufacturer(new Reference(new Organization().setName("Sanofi Pasteur")));
             methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
             immu.setId(methodOutcome.getId());
             tmp.addEntry(new Reference(immu));
