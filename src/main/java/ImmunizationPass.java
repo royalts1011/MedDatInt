@@ -12,7 +12,6 @@ public class ImmunizationPass {
     IGenericClient client;
     Patient patient;
 
-
     Composition totalImmunizationPass;
     // Following List shall be retrieved from the server
 
@@ -56,6 +55,7 @@ public class ImmunizationPass {
          * Add Immunization and test sections sequentially
          */
 
+        // TODO valid end
         iB.buildSectionProphylaxis();
         iB.buildSectionStandardImmunizations();
         iB.buildSectionInfluenzaImmunizations();
@@ -67,9 +67,8 @@ public class ImmunizationPass {
         oB.buildSectionHepatitisB();
         oB.buildSectionHepatitisA();
 
-        // TODO change to actual resource generation
-        this.totalImmunizationPass.addSection(new Composition.SectionComponent()
-                .setTitle("Passive immunizations with human (or heterologous) immunoglobulins"));
+        // TODO look into passive change to actual resource generation
+        oB.buildSectionPassiveImmunizations();
 
         iB.buildCorona();
 

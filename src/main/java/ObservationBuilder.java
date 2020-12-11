@@ -43,11 +43,11 @@ public class ObservationBuilder {
 
         // status required: FINAL = observation is complete
         exObservation.setStatus(Observation.ObservationStatus.FINAL);
-        // TODO Is the category correct for ALL tests?
-        exObservation.addCategory(new CodeableConcept(new Coding(
-                "http://terminology.hl7.org/CodeSystem/observation-category",
-                "laboratory",
-                "Laboratory")) );
+        // TODO Is the category correct for ALL tests? Rather no category!!
+//        exObservation.addCategory(new CodeableConcept(new Coding(
+//                "http://terminology.hl7.org/CodeSystem/observation-category",
+//                "laboratory",
+//                "Laboratory")) );
 
         // set the performed direct test or treatment type
         exObservation.setCode(conceptTestCode);
@@ -84,7 +84,7 @@ public class ObservationBuilder {
             // observation method
             add("http://snomed.info/sct");
             add("424489006");
-            add("Mantoux test (procedure)");
+            add("Mantoux test");
         }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
@@ -101,9 +101,9 @@ public class ObservationBuilder {
             );
             ob.setValue(new StringType("negative"));
             ob.addInterpretation(new CodeableConcept(new Coding(
-                    "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
-                    "L",
-                    "Low")));
+                    "2.16.840.1.113883.6.96",
+                    "268376005",
+                    "Mantoux: negative")));
 
             methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
             ob.setId(methodOutcome.getId());
@@ -114,11 +114,47 @@ public class ObservationBuilder {
     }
 
     public void buildSectionRubellaTest(){
+        Observation ob;
+        MethodOutcome methodOutcome;
+
+        ArrayList<ArrayList<String>> obInfo = new ArrayList<>();
+        obInfo.add(new ArrayList<String>() {{
+            add("1999-10-10");
+            // observation code
+            add("http://loinc.org");
+            add("22496-4");
+            add("Rubella virus Ab [Titer] in Serum");
+            // observation method
+            add("http://snomed.info/sct");
+            add("1358008");
+            add("Anti-human globulin test, enzyme technique, titer");
+        }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
-        // TODO a) before immunization, b) 10 weeks or more after immunization
         tmp.setTitle("Rubella antibody assays");
 
+        for (ArrayList<String> sublist : obInfo) {
+            ob = newBasicObservation(
+                    sublist.get(0),
+                    new CodeableConcept(new Coding(sublist.get(1),
+                            sublist.get(2), sublist.get(3))),
+                    new CodeableConcept(new Coding(sublist.get(4),
+                            sublist.get(5), sublist.get(6))),
+                    this.doctorRoles.get(new Random().nextInt(this.doctorRoles.size()))
+            );
+            /*
+             * Individual TEST RESULT specification
+             */
+            ob.setValue(new StringType("yes"));
+            ob.addInterpretation(new CodeableConcept(new Coding(
+                    "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation",
+                    "HX",
+                    "above high threshold")));
+
+            methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+            ob.setId(methodOutcome.getId());
+            tmp.addEntry(new Reference(ob));
+        }
 
         this.totalImmunizationPass.addSection(tmp);
     }
@@ -132,12 +168,12 @@ public class ObservationBuilder {
             add("1996-12-02");
             // observation code
             add("http://loinc.org");
-            add("10397-8");
-            add("Hepatitis B immune globulin given [Volume]");
+            add("5195-3");
+            add("Hepatitis B virus surface Ag [Presence] in Serum");
             // observation method
             add("http://snomed.info/sct");
             add("65911000");
-            add("Hepatitis B surface antibody measurement (procedure)");
+            add("Hepatitis B surface antibody measurement");
         }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
@@ -175,27 +211,60 @@ public class ObservationBuilder {
         this.totalImmunizationPass.addSection(tmp);
     }
 
-
-    /**
-     * This method will generate hard coded Observations (here immune tests) by using the method "newObservation()".
-     * All content of the immune tests is defined in here.
-     */
-    @Deprecated
-    public void buildObservations() {
-
+    public void buildSectionPassiveImmunizations(){
+        Observation ob;
         MethodOutcome methodOutcome;
-        ArrayList<Observation> obs = new ArrayList<>();
 
+        ArrayList<ArrayList<String>> obInfo = new ArrayList<>();
+        obInfo.add(new ArrayList<String>() {{
+            add("1998-01-04");
+            // observation code
+            add("http://snomed.info/sct");
+            add("117103007");
+            add("Administration of human immune globulin product");
+            // observation method
+            add("http://snomed.info/sct");
+            add("117093001");
+            add("Intramuscular injection of Tetanus immune globulin, human");
+        }});
 
-        for( Observation ob : obs){
-            // Put on server and receive ID
-//            methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
-//            ob.setId(methodOutcome.getId());
-            // add to immunization pass bundle
-//            this.wholeImmunizationPass.addEntry(new Bundle.BundleEntryComponent().setResource(ob));
+        Composition.SectionComponent tmp = new Composition.SectionComponent();
+        tmp.setTitle("Passive immunizations with human (or heterologous) immunoglobulins");
+
+        for (ArrayList<String> sublist : obInfo) {
+            ob = newBasicObservation(
+                    sublist.get(0),
+                    new CodeableConcept(new Coding(sublist.get(1),
+                            sublist.get(2), sublist.get(3))),
+                    new CodeableConcept(new Coding(sublist.get(4),
+                            sublist.get(5), sublist.get(6))),
+                    this.doctorRoles.get(new Random().nextInt(this.doctorRoles.size()))
+            );
+            /*
+             * Individual observation specification
+             */
+            ob.setDataAbsentReason(new CodeableConcept(new Coding(
+                    "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                    "not-applicable",
+                    "Not Applicable"
+            )));
+            ob.addCategory(new CodeableConcept(new Coding(
+                    "http://snomed.info/sct",
+                    "51116004",
+                    "Passive immunization"
+            )));
+            ob.addNote(new Annotation(new MarkdownType("5ml")));
+
+            methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+            ob.setId(methodOutcome.getId());
+            tmp.addEntry(new Reference(ob));
         }
 
+        this.totalImmunizationPass.addSection(tmp);
+
+
     }
+
 
 
 
