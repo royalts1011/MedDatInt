@@ -52,7 +52,7 @@ public class ImmunizationBuilder {
         exImmunization.addPerformer().setActor(new Reference(doctor));
 
         exImmunization.setLotNumber(lotNumber);
-        exImmunization.addProtocolApplied().setDoseNumber(new StringType(doseNumber)).setTargetDisease(targetDiseases);
+        exImmunization.addProtocolApplied().setDoseNumber(new PositiveIntType(doseNumber)).setTargetDisease(targetDiseases);
 
 
         return exImmunization;
@@ -96,23 +96,22 @@ public class ImmunizationBuilder {
 
         ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
         immuInfo.add(new ArrayList<String>() {{
-            add("1991-01-01");
+            add("2009-03-13");
             add("http://hl7.org/fhir/sid/cvx");
             add("184");
             add("Yellow fever, unspecified formulation");
             // chargen nummer
-            add("690010PD");
+            add("FFY010PD");
             // doseNumber
             add("1");
             // target disease
-            add("http://hl7.org/fhir/sid/cvx");
-            add("37");
+            add("http://snomed.info/sct");
+            add("16541001");
             add("yellow fever");
         }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
         tmp.setTitle("International certificate of vaccination or prophylaxis");
-
 
         List<CodeableConcept> targetDiseases;
         for (ArrayList<String> sublist : immuInfo) {
@@ -128,6 +127,7 @@ public class ImmunizationBuilder {
                     sublist.get(5),
                     targetDiseases
             );
+            immu.setManufacturer(new Reference(new Organization().setName("Sanofi Pasteur")));
             methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
             immu.setId(methodOutcome.getId());
             tmp.addEntry(new Reference(immu));
@@ -233,7 +233,7 @@ public class ImmunizationBuilder {
      * All content of the Immunizations is defined in here.
      */
     public void buildSectionInfluenzaImmunizations(){
-         ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
+        ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
         immuInfo.add(new ArrayList<String>() {{
             add("1994-11-14");
             // description of vaccine
@@ -319,6 +319,28 @@ public class ImmunizationBuilder {
             add("http://snomed.info/sct");
             add("14168008");
             add("Rabies (disorder)");
+        }});
+        /*
+         * Twinrix HepA/HepB
+         */
+        immuInfo.add(new ArrayList<String>() {{
+            add("2014-09-17");
+            // description of vaccine
+            add("http://hl7.org/fhir/sid/cvx");
+            add("104");
+            add("Twinrix Hep A-Hep B");
+            // chargen nummer
+            add("AHABB310AD");
+            // doseNumber
+            add("1");
+            // target disease
+            add("http://snomed.info/sct");
+            add("40468003");
+            add("Viral hepatitis type A");
+            // target disease
+            add("http://snomed.info/sct");
+            add("66071002");
+            add("Viral hepatitis type B");
         }});
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
