@@ -157,8 +157,6 @@ public class ObservationBuilder {
         }
 
         this.totalImmunizationPass.addSection(tmp);
-
-        this.totalImmunizationPass.addSection(tmp);
     }
 
     public void buildSectionHepatitisB(){

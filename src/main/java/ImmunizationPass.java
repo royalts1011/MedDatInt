@@ -12,7 +12,6 @@ public class ImmunizationPass {
     IGenericClient client;
     Patient patient;
 
-
     Composition totalImmunizationPass;
     // Following List shall be retrieved from the server
 
