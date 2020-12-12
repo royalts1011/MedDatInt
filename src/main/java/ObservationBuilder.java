@@ -1,5 +1,6 @@
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import org.checkerframework.checker.units.qual.C;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.r4.model.codesystems.NarrativeStatus;
 import org.hl7.fhir.r4.model.codesystems.ObservationCategory;
@@ -103,11 +104,13 @@ public class ObservationBuilder {
                     this.doctorRoles.get(new Random().nextInt(this.doctorRoles.size()))
             );
             ob.setValue(new StringType("negative"));
+            /**
             ob.addInterpretation(new CodeableConcept(new Coding(
                     "2.16.840.1.113883.6.96",
                     "268376005",
                     "Mantoux: negative")));
-
+            */
+            ob.addInterpretation(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation", "NEG", "Negative")));
             methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
             ob.setId(methodOutcome.getId());
             tmp.addEntry(new Reference(ob));
