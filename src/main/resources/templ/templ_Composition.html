@@ -280,6 +280,19 @@
                 <th>Dosis</th>
                 <th>Signature and Stamp of physician</th>
             </tr>
+            <tr th:each="e,state : ${resource.section[9].entry}">
+                <td th:text="${e.resource.occurrence.value}"></td>
+                <td th:text="${e.resource.vaccineCode.coding[0].display}"></td>
+                <td th:text="${e.resource.lotNumber}"></td>
+                <td th:text="${e.resource.doseQuantity.value + e.resource.doseQuantity.unit}"></td>
+                <td><div th:text="${e.resource.performer[0].actor.resource.practitioner.resource.name[0].prefix[0] + ' '
+                                + e.resource.performer[0].actor.resource.practitioner.resource.name[0].given[0] + ' '
+                                + e.resource.performer[0].actor.resource.practitioner.resource.name[0].family }"></div>
+                    <div th:text="${e.resource.performer[0].actor.resource.organization.resource.address[0].line[0] + ' '
+                                + e.resource.performer[0].actor.resource.organization.resource.address[0].line[1]}"></div>
+                    <div th:text="${e.resource.performer[0].actor.resource.organization.resource.address[0].postalCode
+                                + e.resource.performer[0].actor.resource.organization.resource.address[0].city}"></div></td>
+            </tr>
 
         </table>
     </div>

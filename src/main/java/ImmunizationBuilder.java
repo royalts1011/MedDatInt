@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+// TODO Methode zur Generierung der passiven Immu ist noch im Observation Builder,
+//  wegen der Reihenfolge in der die Resourcen hinzugefügt werden müsssen.
+
+
+
 public class ImmunizationBuilder {
 
     Composition totalImmunizationPass;
@@ -28,12 +33,12 @@ public class ImmunizationBuilder {
      *
      * @param conceptVaccineCode
      */
-    private Immunization newImmunization(String occurrenceDate,
-                                        CodeableConcept conceptVaccineCode,
-                                        PractitionerRole doctor,
-                                        String lotNumber,
-                                        String doseNumber,
-                                        List<CodeableConcept> targetDiseases) {
+    Immunization newImmunization(String occurrenceDate,
+                                 CodeableConcept conceptVaccineCode,
+                                 PractitionerRole doctor,
+                                 String lotNumber,
+                                 String doseNumber,
+                                 List<CodeableConcept> targetDiseases) {
         Immunization exImmunization = new Immunization();
 
         //status is required
@@ -376,5 +381,7 @@ public class ImmunizationBuilder {
          */
         addNewImmunizationsToSection(immuInfo, tmp);
     }
+
+
 }
 

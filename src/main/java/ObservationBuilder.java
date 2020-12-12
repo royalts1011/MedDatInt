@@ -9,6 +9,7 @@ import org.hl7.fhir.utilities.xhtml.NodeType;
 import org.hl7.fhir.utilities.xhtml.XhtmlNode;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class ObservationBuilder {
@@ -228,59 +229,128 @@ public class ObservationBuilder {
 
     }
 
-    public void buildSectionPassiveImmunizations(){
-        Observation ob;
+    /**
+     * Builds the passive immunization. Still here because of the order in the HTML-Templates
+     */
+    public void buildSectionPassiveImmunizations() {
+        Immunization immu = new Immunization();
         MethodOutcome methodOutcome;
 
-        ArrayList<ArrayList<String>> obInfo = new ArrayList<>();
-        obInfo.add(new ArrayList<String>() {{
+        ArrayList<ArrayList<String>> immuInfo = new ArrayList<>();
+        immuInfo.add(new ArrayList<String>() {{
             add("1998-01-04");
             // observation code
             add("http://snomed.info/sct");
             add("117103007");
             add("Administration of human immune globulin product");
             // observation method
-            add("http://snomed.info/sct");
-            add("117093001");
-            add("Intramuscular injection of Tetanus immune globulin, human");
+//            add("http://snomed.info/sct");
+//            add("117093001");
+//            add("Intramuscular injection of Tetanus immune globulin, human");
         }});
+
+        List<CodeableConcept> targetDiseases = new ArrayList<CodeableConcept>();
+
+        //TODO besser als route einfügen?
+//        targetDiseases.add(new CodeableConcept(new Coding("http://snomed.info/sct",
+//                "117093001", "Intramuscular injection of Tetanus immune globulin, human")));
+
+        targetDiseases.add(new CodeableConcept(new Coding("http://snomed.info/sct",
+                "76902006", "Tetanus (disorder)")));
+
 
         Composition.SectionComponent tmp = new Composition.SectionComponent();
         tmp.setTitle("Passive immunizations with human (or heterologous) immunoglobulins");
 
-        for (ArrayList<String> sublist : obInfo) {
-            ob = newBasicObservation(
+        for (ArrayList<String> sublist : immuInfo) {
+
+            ImmunizationBuilder immuBuilder = new ImmunizationBuilder(this.totalImmunizationPass, this.patient, this.doctorRoles, this.client);
+
+            immu = immuBuilder.newImmunization(
                     sublist.get(0),
                     new CodeableConcept(new Coding(sublist.get(1),
                             sublist.get(2), sublist.get(3))),
-                    new CodeableConcept(new Coding(sublist.get(4),
-                            sublist.get(5), sublist.get(6))),
-                    this.doctorRoles.get(new Random().nextInt(this.doctorRoles.size()))
+                            this.doctorRoles.get(new Random().nextInt(this.doctorRoles.size())),
+                    "lotNumber123",
+                    "1",
+                    targetDiseases
             );
             /*
              * Individual observation specification
              */
-            ob.setDataAbsentReason(new CodeableConcept(new Coding(
-                    "http://terminology.hl7.org/CodeSystem/data-absent-reason",
-                    "not-applicable",
-                    "Not Applicable"
-            )));
-            ob.addCategory(new CodeableConcept(new Coding(
-                    "http://snomed.info/sct",
-                    "51116004",
-                    "Passive immunization"
-            )));
-            ob.addNote(new Annotation(new MarkdownType("5ml")));
+            immu.addNote(new Annotation((new MarkdownType("Passive immunization"))));
 
-            methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
-            ob.setId(methodOutcome.getId());
-            tmp.addEntry(new Reference(ob));
+            // add Quantity
+            immu.getDoseQuantity().setValue(5);
+            immu.getDoseQuantity().setUnit("ml");
+            immu.getDoseQuantity().setSystem("[\\d*.?\\dml]");
+
+            methodOutcome = client.create().resource(immu).prettyPrint().encodedJson().execute();
+            immu.setId(methodOutcome.getId());
+            tmp.addEntry(new Reference(immu));
         }
 
         this.totalImmunizationPass.addSection(tmp);
 
-
     }
+
+    /**
+     * below the old Method with passive immunization as observation
+     **/
+
+//    public void buildSectionPassiveImmunizations(){
+//        Observation ob;
+//        MethodOutcome methodOutcome;
+//
+//        ArrayList<ArrayList<String>> obInfo = new ArrayList<>();
+//        obInfo.add(new ArrayList<String>() {{
+//            add("1998-01-04");
+//            // observation code
+//            add("http://snomed.info/sct");
+//            add("117103007");
+//            add("Administration of human immune globulin product");
+//            // observation method
+//            add("http://snomed.info/sct");
+//            add("117093001");
+//            add("Intramuscular injection of Tetanus immune globulin, human");
+//        }});
+//
+//        Composition.SectionComponent tmp = new Composition.SectionComponent();
+//        tmp.setTitle("Passive immunizations with human (or heterologous) immunoglobulins");
+//
+//        for (ArrayList<String> sublist : obInfo) {
+//            ob = newBasicObservation(
+//                    sublist.get(0),
+//                    new CodeableConcept(new Coding(sublist.get(1),
+//                            sublist.get(2), sublist.get(3))),
+//                    new CodeableConcept(new Coding(sublist.get(4),
+//                            sublist.get(5), sublist.get(6))),
+//                    this.doctorRoles.get(new Random().nextInt(this.doctorRoles.size()))
+//            );
+//            /*
+//             * Individual observation specification
+//             */
+//            ob.setDataAbsentReason(new CodeableConcept(new Coding(
+//                    "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+//                    "not-applicable",
+//                    "Not Applicable"
+//            )));
+//            ob.addCategory(new CodeableConcept(new Coding(
+//                    "http://snomed.info/sct",
+//                    "51116004",
+//                    "Passive immunization"
+//            )));
+//            ob.addNote(new Annotation(new MarkdownType("5ml")));
+//
+//            methodOutcome = client.create().resource(ob).prettyPrint().encodedJson().execute();
+//            ob.setId(methodOutcome.getId());
+//            tmp.addEntry(new Reference(ob));
+//        }
+//
+//        this.totalImmunizationPass.addSection(tmp);
+//
+//
+//    }
 
 
 
