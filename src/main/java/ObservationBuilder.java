@@ -1,8 +1,11 @@
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.codesystems.NarrativeStatus;
 import org.hl7.fhir.r4.model.codesystems.ObservationCategory;
 import org.hl7.fhir.r4.model.codesystems.ObservationRangeCategory;
+import org.hl7.fhir.utilities.xhtml.NodeType;
+import org.hl7.fhir.utilities.xhtml.XhtmlNode;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -208,7 +211,18 @@ public class ObservationBuilder {
     public void buildSectionHepatitisA(){
         Composition.SectionComponent tmp = new Composition.SectionComponent();
         tmp.setTitle("Hepatitis A: Result of antibody assays (Anti-Hbs)");
+
+
+        // TODO
+        Narrative n = new Narrative();
+        n.setStatus(Narrative.NarrativeStatus.EMPTY);
+        n.setDiv(new XhtmlNode().setValue(XhtmlNode.XMLNS));
+        tmp.setText(n);
+        tmp.setEmptyReason(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/list-empty-reason","nilknown","Nil Known")));
+
         this.totalImmunizationPass.addSection(tmp);
+
+
     }
 
     public void buildSectionPassiveImmunizations(){

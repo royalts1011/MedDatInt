@@ -59,7 +59,7 @@ public class HospitalBuilder {
          */
         Practitioner doctor = new Practitioner();
         HumanName doctorsName = new HumanName();
-        doctorsName.addPrefix("Dr.").addGiven("Waltraud").setFamily("Lemmy");
+        doctorsName.addPrefix("Dr.").addGiven("Waltraud").setFamily("Lemmys");
         doctor.addName(doctorsName);
 
         MethodOutcome doctorOutcome = client.create().resource(doctor).conditional()
@@ -70,7 +70,7 @@ public class HospitalBuilder {
         PractitionerRole doctorRole = new PractitionerRole();
         doctorRole.setPractitionerTarget(doctor).setPractitioner(new Reference(doctor));
         doctorRole.setOrganizationTarget(this.myHospital).setOrganization(new Reference(this.myHospital));
-        doctorRole.addCode(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/practitioner-role", "doctor",
+        doctorRole.addCode(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/practitioner-role", "doctor",
                 "A qualified/registered medical practitioner")));
 
         MethodOutcome doctorRoleOutcome = client.create().resource(doctorRole).prettyPrint().encodedJson().execute();
@@ -85,7 +85,7 @@ public class HospitalBuilder {
          */
         doctor = new Practitioner();
         doctorsName = new HumanName();
-        doctorsName.addPrefix("Dr.").addGiven("Arno").setFamily("Dübels");
+        doctorsName.addPrefix("Dr.").addGiven("Arno").setFamily("Dübelus");
         doctor.addName(doctorsName);
 
         doctorOutcome = client.create().resource(doctor).conditional()
@@ -96,7 +96,7 @@ public class HospitalBuilder {
         doctorRole = new PractitionerRole();
         doctorRole.setPractitionerTarget(doctor).setPractitioner(new Reference(doctor));
         doctorRole.setOrganizationTarget(this.myHospital).setOrganization(new Reference(this.myHospital));
-        doctorRole.addCode(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/practitioner-role", "doctor",
+        doctorRole.addCode(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/practitioner-role", "doctor",
                 "A qualified/registered medical practitioner")));
 
         doctorRoleOutcome = client.create().resource(doctorRole).prettyPrint().encodedJson().execute();

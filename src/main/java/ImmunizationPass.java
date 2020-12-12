@@ -5,7 +5,7 @@ import org.hl7.fhir.r4.model.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-
+import java.util.Random;
 
 
 public class ImmunizationPass {
@@ -89,8 +89,10 @@ public class ImmunizationPass {
                 "Medical records")));
         this.totalImmunizationPass.addCategory(new CodeableConcept(new Coding("http://loinc.org", "11369-6",
                 "History of Immunization Narrative")));
+        this.totalImmunizationPass.setSubject(new Reference((this.patient)));
+
         this.totalImmunizationPass.setDate(Calendar.getInstance().getTime());
-       // totalImmunizationPass.addAuthor()
+        this.totalImmunizationPass.addAuthor(new Reference(this.doctorRoles.get(new Random().nextInt(this.doctorRoles.size()))));
 
         this.totalImmunizationPass.setTitle("International Certificates of Vaccination");
     }
@@ -104,8 +106,8 @@ public class ImmunizationPass {
         Patient exPatient = new Patient();
 
         // declare names for setting and checking (in the conditional create)
-        String firstName = "Jekofa3";
-        String lastName = "von Krule3";
+        String firstName = "Jekofa5";
+        String lastName = "von Krule5";
 
         // Official Name
         HumanName exName = new HumanName();
@@ -120,7 +122,7 @@ public class ImmunizationPass {
         exPatient.setBirthDate(cal.getTime());
 
         // MaritalStatus
-        exPatient.setMaritalStatus(new CodeableConcept(new Coding("http://hl7.org/fhir/ValueSet/marital-status", "U",
+        exPatient.setMaritalStatus(new CodeableConcept(new Coding("http://terminology.hl7.org/CodeSystem/v3-MaritalStatus", "U",
                 "unmarried")));
 
         // Create and add address
