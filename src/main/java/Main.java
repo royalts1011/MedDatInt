@@ -60,6 +60,15 @@ public class Main {
                     }
                 }
 
+        File file3 = new File("output/pass_Sub_Comps.json");
+        try (FileWriter fileWriter = new FileWriter(file3)) {
+            fileWriter.write(sectionComps);
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (Exception e)   {
+            e.printStackTrace();
+        }
+
 
 
     }

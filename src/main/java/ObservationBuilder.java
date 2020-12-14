@@ -271,7 +271,7 @@ public class ObservationBuilder {
                     new CodeableConcept(new Coding(sublist.get(1),
                             sublist.get(2), sublist.get(3))),
                             this.doctorRoles.get(new Random().nextInt(this.doctorRoles.size())),
-                    "lotNumber123",
+                    "341345",
                     "1",
                     targetDiseases
             );
